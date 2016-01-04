@@ -72,7 +72,10 @@ func Insert(table string, data interface{}) (err error) {
 	if sqlr, ok := AllReflectMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
 	} else {
-		re, re_str, rel_s, _ = sqlr(data)
+		re, re_str, rel_s, err = sqlr(data)
+		if err != nil {
+			return
+		}
 	}
 	rels := *rel_s
 	_, err = SQLDB.Exec(`INSERT INTO `+table+` (`+*re+`) VALUES(`+*re_str+`)`, rels...)
@@ -91,7 +94,10 @@ func Update(table string, req string, data interface{}, column []string) (err er
 	if sqlr, ok := UpdateReflectMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
 	} else {
-		re, rel_s, _ = sqlr(data, column)
+		re, rel_s, err = sqlr(data, column)
+		if err != nil {
+			return
+		}
 	}
 	rels := *rel_s
 
