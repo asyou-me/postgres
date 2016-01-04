@@ -60,7 +60,7 @@ func main() {
 	}
 	defer fout.Close()
 
-	tmpl, err := template.New("type").Parse(tmp)
+	tmpl, err := template.New("type").Funcs(template_func).Parse(tmp)
 	if err != nil {
 		fmt.Println(err)
 		return

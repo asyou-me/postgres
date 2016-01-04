@@ -18,4 +18,5 @@ type InputColumn struct {
 	StructName string `json:"struct_name"`
 	Tag        string `json:"tag"`
 	Type       string `json:"type"`
+	Default    string `json:"default"`
 }

@@ -7,9 +7,13 @@ import (
 func One(table string, req string, out interface{}, column []string) (err error) {
 	var re *[]interface{}
 	var re_str *string
+
 	if sqlf, ok := SqlFuncMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
 	} else {
+		if !SqlCheckMap[table](out) {
+			return errors.New("表" + table + "与传入的结构体不兼容")
+		}
 		re, re_str, err = sqlf(out, column)
 		if err != nil {
 			return err
@@ -26,18 +30,20 @@ func All(table string, req string, out interface{}, column []string, sort string
 
 	var re *[]interface{}
 	var re_str *string
-
-	out_item := SqlNewMap[table]()
+	var out_item interface{}
 
 	if sqlf, ok := SqlFuncMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
 	} else {
+		if !SqlCheck2Map[table](out) {
+			return errors.New("表" + table + "与传入的结构体不兼容")
+		}
+		out_item = SqlNewMap[table]()
 		re, re_str, err = sqlf(out_item, column)
 		if err != nil {
 			return err
 		}
 	}
-
 	re_slice := *re
 
 	rows, err := SQLDB.Query(`SELECT `+*re_str+` FROM `+table+` `+req+` `+sort+` LIMIT $1 OFFSET $2`, limit, int(limit)*(p-1))
@@ -57,4 +63,41 @@ func All(table string, req string, out interface{}, column []string, sort string
 
 	rows.Close()
 	return nil
+}
+
+func Insert(table string, data interface{}) (err error) {
+	var re *string
+	var re_str *string
+	var rel_s *[]interface{}
+	if sqlr, ok := AllReflectMap[table]; !ok {
+		return errors.New("表" + table + "未初始化")
+	} else {
+		re, re_str, rel_s, _ = sqlr(data)
+	}
+	rels := *rel_s
+	_, err = SQLDB.Exec(`INSERT INTO `+table+` (`+*re+`) VALUES(`+*re_str+`)`, rels...)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func Update(table string, req string, data interface{}, column []string) (err error) {
+	if req == "" {
+		return errors.New("更新条件不能为空")
+	}
+	var re *string
+	var rel_s *[]interface{}
+	if sqlr, ok := UpdateReflectMap[table]; !ok {
+		return errors.New("表" + table + "未初始化")
+	} else {
+		re, rel_s, _ = sqlr(data, column)
+	}
+	rels := *rel_s
+
+	_, err = SQLDB.Exec(`UPDATE `+table+` SET  `+*re+` `+req, rels...)
+	if err != nil {
+		return
+	}
+	return
 }
