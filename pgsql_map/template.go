@@ -97,6 +97,7 @@ func init() {
   {{range $_, $v := .Tables}}postgres.AllReflectMap["{{$v.Name}}"] = {{$v.StructName}}AllReflect{{end}}
   {{range $_, $v := .Tables}}postgres.UpdateReflectMap["{{$v.Name}}"] = {{$v.StructName}}UpdateReflect{{end}}
 }
+
 func test() {
     fmt.Println("start sqlmap")
 }

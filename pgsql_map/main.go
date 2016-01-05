@@ -19,7 +19,8 @@ func Usage() {
 
 func main() {
 	flag.Usage = Usage
-	conf_path := flag.String("conf", "", "配置文件路径")
+	inpath := flag.String("in", "", "配置文件路径")
+	outpath := flag.String("o", "", "配置文件路径")
 
 	flag.Parse()
 
