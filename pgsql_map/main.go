@@ -53,6 +53,8 @@ func main() {
 		return
 	}
 
+	ColumnsStringToCloumn(obj)
+
 	fout, err := os.Create(*outpath)
 	if err != nil {
 		fmt.Println(err)

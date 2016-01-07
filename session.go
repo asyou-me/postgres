@@ -9,8 +9,8 @@ type Session struct {
 	Tx *sql.Tx
 }
 
-func Begin() (*Session, error) {
-	s, err := SQLDB.Begin()
+func (d *DB) Begin() (*Session, error) {
+	s, err := d.SQLDB.Begin()
 	session := &Session{}
 	if err != nil {
 		return session, err

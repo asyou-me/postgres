@@ -1,20 +1,24 @@
 {
-	"package": "models",
-	"tables": [{
-		"name": "test1",
-		"struct_name": "Test1",
-		"columns": [{
-			"name": "test1",
-			"struct_name": "Test1",
-			"tag": "json:\"test1\"",
-			"type": "string",
-			"default": ""
-		}, {
-			"name": "test2",
-			"struct_name": "Test2",
-			"tag": "json:\"test2\"",
-			"type": "int64",
-			"default": "0"
-		}]
-	}]
+  "package": "models",
+  "tables": [{
+    "name": "user",
+    "struct_name": "User",
+    "columns": [
+      "id,Id,string,default,json:\"id\"",
+      "nick,Nick,string,,json:\"nick\"",
+      "email,Email,string,,json:\"email\"",
+      "passwd,Passwd,string,,json:\"passwd\"",
+      "created,created,int64,0,json:\"created\"",
+      "updated,Updated,int64,0,json:\"updated\"",
+      "deleted,Deleted,int64,0,json:\"deleted\"",
+      "active,Active,bool,true,json:\"active\"",
+      "attr,Attr,string,{},json:\"attr\""
+    ]
+  }, {
+    "name": "task",
+    "struct_name": "Task",
+    "columns": [
+      "d,D,string,{},json:\"d\""
+    ]
+  }]
 }

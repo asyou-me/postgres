@@ -13,8 +13,8 @@ import (
     {{$v2.StructName}}   {{$v2.Type}} ` + "`" + `{{$v2.Tag}}` + "`" + `{{end}}
 }
 
-var {{$v.StructName}}_all_column = "{{range $k2, $v2 := $v.Columns}}{{$v2.Name}}{{if $k2}}{{else}},{{end}}{{end}}"
-var {{$v.StructName}}_all_column_index = "{{range $k2, $v2 := $v.Columns}}${{add $k2}}{{if $k2}}{{else}},{{end}}{{end}}"
+var {{$v.StructName}}_all_column = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}{{$v2.Name}}{{end}}"
+var {{$v.StructName}}_all_column_index = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}${{add $k2}}{{end}}"
 
 func {{$v.StructName}}Reflect(s interface{}, column []string) (*[]interface{},*string, error) {
   rel := make([]interface{}, 0, 10)
@@ -65,37 +65,47 @@ func {{$v.StructName}}AllReflect(s interface{}) (*string,*string, *[]interface{}
   return rel, rel_str,&rel_s, nil
 }
 
-func {{$v.StructName}}New() interface{}{
+func {{$v.StructName}}NewReflect() interface{}{
   return &{{$v.StructName}}{}
 }
 
-func {{$v.StructName}}Check(s interface{}) bool{
+func {{$v.StructName}}CheckReflect(s interface{}) bool{
   _, ok := s.(*{{$v.StructName}})
   return ok
 }
 
-func {{$v.StructName}}Check2(s interface{}) bool{
+func {{$v.StructName}}Check2Reflect(s interface{}) bool{
   _, ok := s.(*[]{{$v.StructName}})
   return ok
 }
 
-func {{$v.StructName}}Add(all interface{},s interface{}){
+func {{$v.StructName}}AddReflect(all interface{},s interface{}){
    all_data := all.(*[]{{$v.StructName}})
    sr := *s.(*{{$v.StructName}})
 
    new_sr := {{$v.StructName}}{}
    new_sr = sr
   *all_data = append(*all_data, new_sr)
-}{{end}}
+}
+{{end}}
 
-func init() {
-  {{range $_, $v := .Tables}}postgres.SqlFuncMap["{{$v.Name}}"] = {{$v.StructName}}Reflect{{end}}
-  {{range $_, $v := .Tables}}postgres.SqlNewMap["{{$v.Name}}"] = {{$v.StructName}}New{{end}}
-  {{range $_, $v := .Tables}}postgres.SqlAddMap["{{$v.Name}}"] = {{$v.StructName}}Add{{end}}
-  {{range $_, $v := .Tables}}postgres.SqlCheckMap["{{$v.Name}}"] = {{$v.StructName}}Check{{end}}
-  {{range $_, $v := .Tables}}postgres.SqlCheck2Map["{{$v.Name}}"] = {{$v.StructName}}Check2{{end}}
-  {{range $_, $v := .Tables}}postgres.AllReflectMap["{{$v.Name}}"] = {{$v.StructName}}AllReflect{{end}}
-  {{range $_, $v := .Tables}}postgres.UpdateReflectMap["{{$v.Name}}"] = {{$v.StructName}}UpdateReflect{{end}}
+func NewDB() *postgres.DB {
+  db := postgres.NewDB()
+  {{range $_, $v := .Tables}}
+  db.SqlFuncMap["{{$v.Name}}"] = {{$v.StructName}}Reflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.SqlNewMap["{{$v.Name}}"] = {{$v.StructName}}NewReflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.SqlAddMap["{{$v.Name}}"] = {{$v.StructName}}AddReflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.SqlCheckMap["{{$v.Name}}"] = {{$v.StructName}}CheckReflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.SqlCheck2Map["{{$v.Name}}"] = {{$v.StructName}}Check2Reflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.AllReflectMap["{{$v.Name}}"] = {{$v.StructName}}AllReflect{{end}}
+  {{range $_, $v := .Tables}}
+  db.UpdateReflectMap["{{$v.Name}}"] = {{$v.StructName}}UpdateReflect{{end}}
+  return db
 }
 
 func test() {

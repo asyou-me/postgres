@@ -5,24 +5,7 @@ import (
 )
 
 var template_func = template.FuncMap{
-	"column": func(name, ty string) string {
-		rel := ""
-		switch ty {
-		case "string":
-			rel = rel + "\"'\"+sr." + name + "+\"'\""
-		case "int64":
-			rel = rel + "fmt.Sprintf(\"%d\",sr." + name + ")"
-		case "int32":
-			rel = rel + "fmt.Sprintf(\"%d\",sr." + name + ")"
-		case "int16":
-			rel = rel + "fmt.Sprintf(\"%d\",sr." + name + ")"
-		case "int8":
-			rel = rel + "fmt.Sprintf(\"%d\",sr." + name + ")"
-		default:
-
-		}
-		return rel
-	}, "column_def": func(ty string) string {
+	"column_def": func(ty string) string {
 		switch ty {
 		case "string":
 			return "\"\""
@@ -34,6 +17,12 @@ var template_func = template.FuncMap{
 			return "0"
 		case "int8":
 			return "0"
+		case "float32":
+			return "0"
+		case "float64":
+			return "0"
+		case "bool":
+			return "false"
 		default:
 			return ""
 		}
@@ -49,8 +38,14 @@ var template_func = template.FuncMap{
 			return def
 		case "int8":
 			return def
+		case "float32":
+			return def
+		case "float64":
+			return def
+		case "bool":
+			return def
 		default:
-			return ""
+			return def
 		}
 	}, "add": func(i int) int {
 		return i + 1

@@ -24,32 +24,39 @@ type StructReflect func(s interface{}) (*string, *string, *[]interface{}, error)
 type UpdateReflect func(s interface{}, column []string) (*string, *[]interface{}, error)
 
 var (
-	//数据操作连接
-	SQLDB *sql.DB
-	//数据日志对象
-	loger            Loger
-	SqlFuncMap       map[string]ReflectFunc   = map[string]ReflectFunc{}
-	SqlNewMap        map[string]NewFunc       = map[string]NewFunc{}
-	SqlAddMap        map[string]AddFunc       = map[string]AddFunc{}
-	SqlCheckMap      map[string]CheckFunc     = map[string]CheckFunc{}
-	SqlCheck2Map     map[string]CheckFunc     = map[string]CheckFunc{}
-	AllReflectMap    map[string]StructReflect = map[string]StructReflect{}
-	UpdateReflectMap map[string]UpdateReflect = map[string]UpdateReflect{}
-
 	AllColumn = []string{}
 )
 
-func Init(sqlurl string, l Loger) error {
+type DB struct {
+	//数据操作连接
+	SQLDB            *sql.DB
+	loger            Loger
+	SqlFuncMap       map[string]ReflectFunc
+	SqlNewMap        map[string]NewFunc
+	SqlAddMap        map[string]AddFunc
+	SqlCheckMap      map[string]CheckFunc
+	SqlCheck2Map     map[string]CheckFunc
+	AllReflectMap    map[string]StructReflect
+	UpdateReflectMap map[string]UpdateReflect
+}
+
+func (d *DB) Open(sqlurl string, l Loger) error {
 	//初始化数据库
 	var err error
-	SQLDB, err = sql.Open("postgres", sqlurl)
+	d.SQLDB, err = sql.Open("postgres", sqlurl)
 	//传入外部日志模块
-	loger = l
+	d.loger = l
 	return err
 }
 
-func Map_list() {
-}
-
-func Map_add() {
+func NewDB() *DB {
+	db := DB{}
+	db.SqlFuncMap = map[string]ReflectFunc{}
+	db.SqlNewMap = map[string]NewFunc{}
+	db.SqlAddMap = map[string]AddFunc{}
+	db.SqlCheckMap = map[string]CheckFunc{}
+	db.SqlCheck2Map = map[string]CheckFunc{}
+	db.AllReflectMap = map[string]StructReflect{}
+	db.UpdateReflectMap = map[string]UpdateReflect{}
+	return &db
 }
