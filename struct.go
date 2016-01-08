@@ -4,6 +4,17 @@ import (
 	"errors"
 )
 
+func (d *DB) Begin() (*Session, error) {
+	s, err := d.SQLDB.Begin()
+	session := &Session{}
+	if err != nil {
+		return session, err
+	}
+	session.Tx = s
+	session.DB = d
+	return session, nil
+}
+
 func (d *DB) One(table string, req string, out interface{}, column []string) (err error) {
 	var re *[]interface{}
 	var re_str *string
@@ -107,4 +118,21 @@ func (d *DB) Update(table string, req string, data interface{}, column []string)
 		return
 	}
 	return
+}
+
+func (d *DB) Del(table string, req string) (err error) {
+	_, err = d.SQLDB.Exec(`DELETE FROM ` + table + ` ` + req)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (d *DB) Count(table string, req string) int64 {
+	var re int64
+	err := d.SQLDB.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + req).Scan(&re)
+	if err != nil {
+		return 0
+	}
+	return re
 }

@@ -29,8 +29,9 @@ var (
 
 type DB struct {
 	//数据操作连接
-	SQLDB            *sql.DB
-	loger            Loger
+	SQLDB *sql.DB
+	loger Loger
+	//预留反射类型
 	SqlFuncMap       map[string]ReflectFunc
 	SqlNewMap        map[string]NewFunc
 	SqlAddMap        map[string]AddFunc
