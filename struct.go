@@ -4,6 +4,7 @@ import (
 	"errors"
 )
 
+//开启一个事务
 func (d *DB) Begin() (*Session, error) {
 	s, err := d.SQLDB.Begin()
 	session := &Session{}
@@ -15,6 +16,11 @@ func (d *DB) Begin() (*Session, error) {
 	return session, nil
 }
 
+//获取单条查询结构
+//param1:数据库表的名字
+//param2:查询条件 sql写法 where xxx
+//param3:查询后返回结果需要放入的对象
+//param4:查询返回的结果需要包含的字段
 func (d *DB) One(table string, req string, out interface{}, column []string) (err error) {
 	var re *[]interface{}
 	var re_str *string
@@ -38,6 +44,14 @@ func (d *DB) One(table string, req string, out interface{}, column []string) (er
 	return nil
 }
 
+//获取单条查询结构
+//param1:数据库表的名字
+//param2:查询条件 sql写法 where xxx
+//param3:查询后返回结果需要放入的对象
+//param4:查询返回的结果需要包含的字段
+//param5:排序相关的写法 order by xxx
+//param6:查询数据的页数
+//param7:查询数据的每页条数
 func (d *DB) All(table string, req string, out interface{}, column []string, sort string, p int, limit int16) (err error) {
 
 	var re *[]interface{}
@@ -77,6 +91,7 @@ func (d *DB) All(table string, req string, out interface{}, column []string, sor
 	return nil
 }
 
+//插入数据到数据库
 func (d *DB) Insert(table string, data interface{}) (err error) {
 	var re *string
 	var re_str *string
@@ -97,6 +112,11 @@ func (d *DB) Insert(table string, data interface{}) (err error) {
 	return
 }
 
+//更新数据到数据库
+//param1:更新数据的表
+//param2:查询条件 sql写法 where xxx
+//param3:需要更新的数据的对象
+//param4:需要更新的字段
 func (d *DB) Update(table string, req string, data interface{}, column []string) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
@@ -120,6 +140,9 @@ func (d *DB) Update(table string, req string, data interface{}, column []string)
 	return
 }
 
+//删除数据
+//param1:删除数据的表
+//param2:条件sql写法 where xxx
 func (d *DB) Del(table string, req string) (err error) {
 	_, err = d.SQLDB.Exec(`DELETE FROM ` + table + ` ` + req)
 	if err != nil {
@@ -128,6 +151,9 @@ func (d *DB) Del(table string, req string) (err error) {
 	return
 }
 
+//获取数据的条数
+//param1:数据的表
+//param2:条件sql写法 where xxx
 func (d *DB) Count(table string, req string) int64 {
 	var re int64
 	err := d.SQLDB.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + req).Scan(&re)

@@ -1,5 +1,6 @@
 package postgres
 
+//日志模块接口定义
 type Loger interface {
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})

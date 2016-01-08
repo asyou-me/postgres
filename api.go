@@ -31,7 +31,7 @@ type DB struct {
 	//数据操作连接
 	SQLDB *sql.DB
 	loger Loger
-	//预留反射类型
+	//数据库结构反射方法map
 	SqlFuncMap       map[string]ReflectFunc
 	SqlNewMap        map[string]NewFunc
 	SqlAddMap        map[string]AddFunc
@@ -50,6 +50,7 @@ func (d *DB) Open(sqlurl string, l Loger) error {
 	return err
 }
 
+//定义新建数据库操作对象的当法
 func NewDB() *DB {
 	db := DB{}
 	db.SqlFuncMap = map[string]ReflectFunc{}
