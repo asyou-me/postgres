@@ -7,6 +7,7 @@ import (
 type InputType struct {
 	Package string       `json:"package"`
 	Tables  []InputTable `json:"tables"`
+	Decorat string       `json:"decorat"`
 }
 
 type InputTable struct {

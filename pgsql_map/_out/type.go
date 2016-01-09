@@ -245,8 +245,7 @@ func TaskAddReflect(all interface{},s interface{}){
 }
 
 
-func NewDB() *postgres.DB {
-  db := postgres.NewDB()
+func DecoratType(db *postgres.DB) {
   
   db.SqlFuncMap["user"] = UserReflect
   db.SqlFuncMap["task"] = TaskReflect
@@ -268,7 +267,6 @@ func NewDB() *postgres.DB {
   
   db.UpdateReflectMap["user"] = UserUpdateReflect
   db.UpdateReflectMap["task"] = TaskUpdateReflect
-  return db
 }
 
 func test() {

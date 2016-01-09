@@ -89,8 +89,7 @@ func {{$v.StructName}}AddReflect(all interface{},s interface{}){
 }
 {{end}}
 
-func NewDB() *postgres.DB {
-  db := postgres.NewDB()
+func {{.Decorat}}(db *postgres.DB) {
   {{range $_, $v := .Tables}}
   db.SqlFuncMap["{{$v.Name}}"] = {{$v.StructName}}Reflect{{end}}
   {{range $_, $v := .Tables}}
@@ -105,7 +104,6 @@ func NewDB() *postgres.DB {
   db.AllReflectMap["{{$v.Name}}"] = {{$v.StructName}}AllReflect{{end}}
   {{range $_, $v := .Tables}}
   db.UpdateReflectMap["{{$v.Name}}"] = {{$v.StructName}}UpdateReflect{{end}}
-  return db
 }
 
 func test() {
