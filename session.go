@@ -21,7 +21,7 @@ func (s *Session) Rollback() error {
 	return s.Tx.Rollback()
 }
 
-//获取单条查询结构
+//查询单条数据并解析到结构体
 //param1:数据库表的名字
 //param2:查询条件 sql写法 where xxx
 //param3:查询后返回结果需要放入的对象
