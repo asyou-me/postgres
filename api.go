@@ -5,23 +5,25 @@ import (
 	_ "github.com/lib/pq"
 )
 
-//代替反射的方法,通过字段名获取结构体的值，基于预编译的方法
-type ReflectFunc func(s interface{}, column []string) (*[]interface{}, *string, error)
+type (
+	//代替反射的方法,通过字段名获取结构体的值，基于预编译的方法
+	ReflectFunc func(s interface{}, column []string) (*[]interface{}, *string, error)
 
-//基于预编译的方法获取基本元对象
-type NewFunc func() interface{}
+	//基于预编译的方法获取基本元对象
+	NewFunc func() interface{}
 
-//数组添加元素
-type AddFunc func(all interface{}, s interface{})
+	//数组添加元素
+	AddFunc func(all interface{}, s interface{})
 
-//数组添加元素
-type CheckFunc func(s interface{}) bool
+	//数组添加元素
+	CheckFunc func(s interface{}) bool
 
-//插入结构反射
-type StructReflect func(s interface{}) (*string, *string, *[]interface{}, error)
+	//插入结构反射
+	StructReflect func(s interface{}) (*string, *string, *[]interface{}, error)
 
-//插入结构反射
-type UpdateReflect func(s interface{}, column []string) (*string, *[]interface{}, error)
+	//插入结构反射
+	UpdateReflect func(s interface{}, column []string) (*string, *[]interface{}, error)
+)
 
 var (
 	AllColumn = []string{}
