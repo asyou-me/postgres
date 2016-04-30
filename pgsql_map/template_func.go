@@ -24,7 +24,7 @@ var template_func = template.FuncMap{
 		case "bool":
 			return "false"
 		default:
-			return ""
+			return "nil"
 		}
 	}, "column_def_replace": func(ty string, def string) string {
 		switch ty {

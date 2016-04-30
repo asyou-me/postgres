@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"database/sql"
-	"errors"
+	//"errors"
 	_ "github.com/lib/pq"
 )
 
@@ -20,6 +20,8 @@ func (s *Session) Commit() error {
 func (s *Session) Rollback() error {
 	return s.Tx.Rollback()
 }
+
+/*
 
 //查询单条数据并解析到结构体
 //param1:数据库表的名字
@@ -167,3 +169,5 @@ func (s *Session) Count(table string, req string) int64 {
 	}
 	return re
 }
+
+*/

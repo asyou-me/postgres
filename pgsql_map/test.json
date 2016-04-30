@@ -1,5 +1,5 @@
 {
-	"package": "models",
+	"package": "exmples",
 	"decorat": "DecoratType",
 	"tables": [{
 		"name": "user",
@@ -16,10 +16,10 @@
 			"attr,Attr,string,{},json:\"attr\""
 		]
 	}, {
-		"name": "task",
-		"struct_name": "Task",
+		"name": "test",
+		"struct_name": "Test",
 		"columns": [
-			"d,D,string,{},json:\"d\""
+			"d,D,*map[string]string,&map[string]string{},json:\"d\""
 		]
 	}]
 }
