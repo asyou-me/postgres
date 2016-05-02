@@ -1,9 +1,9 @@
 {
 	"package": "exmples",
-	"decorat": "DecoratType",
 	"tables": [{
 		"name": "user",
 		"struct_name": "User",
+		"show_struct": true,
 		"columns": [
 			"id,Id,string,default,json:\"id\"",
 			"nick,Nick,string,,json:\"nick\"",

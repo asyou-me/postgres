@@ -9,9 +9,9 @@ import (
   "fmt"
 )
 
-{{range $_, $v := .Tables}}type {{$v.StructName}} struct { {{range $_, $v2 := $v.Columns}}
+{{range $_, $v := .Tables}}{{if eq $v.ShowStruct true}} type {{$v.StructName}} struct { {{range $_, $v2 := $v.Columns}}
     {{$v2.StructName}}   {{$v2.Type}} ` + "`" + `{{$v2.Tag}}` + "`" + `{{end}}
-}
+}{{end}}
 
 var {{$v.StructName}}_all_column = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}{{$v2.Name}}{{end}}"
 var {{$v.StructName}}_all_column_index = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}${{add $k2}}{{end}}"
@@ -34,23 +34,6 @@ func (this *{{$v.StructName}}) Reflect(column []string) (*[]interface{},*string,
   return &rel,&rel_str, nil
 }
 
-/*func (this *{{$v.StructName}}) ColumnReflect(column []string) (*[]interface{}, *string, error) {
-  rel := ""
-  rel_s :=make([]interface{}, 0, 10)
-
-  for k, v := range column {
-    rel = rel+v+"=$"+fmt.Sprintf("%d",k+1)+","
-    switch v { {{range $_, $v2 := $v.Columns}}
-    case "{{$v2.Name}}":
-      rel_s = append(rel_s,this.{{$v2.StructName}}){{end}}
-    default:
-      return &rel_s, &rel, errors.New(v + ",字段不存在")
-    }
-  }
-  rel = strings.TrimRight(rel, ",")
-  return &rel_s, &rel,  nil
-}*/
-
 func (this *{{$v.StructName}}) AllReflect() (*[]interface{},*string,*string,error) {
   rel := &{{$v.StructName}}_all_column
   rel_str := &{{$v.StructName}}_all_column_index
@@ -71,21 +54,26 @@ func (this *{{$v.StructName}}) TableName() string {
 func (this *{{$v.StructName}}) AppendSelf(all interface{})error{
    all_data,ok := all.(*[]{{$v.StructName}})
    if ok==false{
-    return errors.New("传入结构和表名不符")
+    all_data2,ok2 := all.(*[]*{{$v.StructName}})
+    if ok2==false {
+      return errors.New("传入结构和表名不符")
+    }
+    *all_data2 = append(*all_data2, this)
+    return nil
    }
   *all_data = append(*all_data, *this)
   return nil
 }
 
-
-func {{$v.StructName}}New() postgres.ReflectInterface{
+func New{{$v.StructName}}() postgres.ReflectInterface{
   return new({{$v.StructName}})
 }
 
+func {{$v.StructName}}Test() {
+    fmt.Println("start sqlmap")
+}
 {{end}}
 
 
-func test() {
-    fmt.Println("start sqlmap")
-}
+
 `

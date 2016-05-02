@@ -35,7 +35,10 @@ func (this *DB) One(table string, req string, out ReflectInterface, column ...st
 		return err
 	}
 
-	err = this.Pool.QueryRow(`SELECT ` + *reStr + ` FROM "` + table + `" ` + req).Scan(*relSlice...)
+	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + req
+	err = this.Pool.QueryRow(query).Scan(*relSlice...)
+
+	this.Info(query)
 
 	return err
 }
@@ -48,7 +51,9 @@ func (this *DB) One(table string, req string, out ReflectInterface, column ...st
 //param5:排序相关的写法 order by xxx
 //param6:查询数据的页数
 //param7:查询数据的每页条数
-func (d *DB) All(table string, req string, out interface{}, sort string, p int, limit int16, column ...string) (err error) {
+func (d *DB) All(table string, req string, sort string,
+	out interface{}, limit int16, offset int64,
+	column ...string) (err error) {
 
 	var relSlice *[]interface{}
 	var reStr *string
@@ -68,13 +73,17 @@ func (d *DB) All(table string, req string, out interface{}, sort string, p int, 
 	}
 
 	if err != nil {
-		d.loger.Warn("该处需要错误日志系统", err)
+		//d.loger.Warn("该处需要错误日志系统", err)
 		return err
 	}
 
-	rows, err := d.Pool.Query(`SELECT `+*reStr+` FROM "`+table+`" `+req+` `+sort+` LIMIT $1 OFFSET $2`, limit, int(limit)*(p-1))
+	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + req + ` ` + sort + ` LIMIT $1 OFFSET $2`
+	rows, err := d.Pool.Query(query, limit, offset)
+
+	d.Info(query)
 	if err != nil {
-		d.loger.Warn("该处需要错误日志系统", err)
+		d.Warn(err.Error())
+		//d.loger.Warn("该处需要错误日志系统", err)
 		return err
 	}
 
@@ -95,7 +104,8 @@ func (d *DB) All(table string, req string, out interface{}, sort string, p int, 
 			}
 
 			if err != nil {
-				d.loger.Warn("该处需要错误日志系统", err)
+				d.Warn(err.Error())
+				//d.loger.Warn("该处需要错误日志系统", err)
 				continue
 			}
 		}
@@ -103,7 +113,8 @@ func (d *DB) All(table string, req string, out interface{}, sort string, p int, 
 
 		err = rows.Scan(*relSlice...)
 		if err != nil {
-			d.loger.Warn("该处需要错误日志系统", err)
+			d.Warn(err.Error())
+			//d.loger.Warn("该处需要错误日志系统", err)
 			continue
 		}
 
@@ -115,21 +126,20 @@ func (d *DB) All(table string, req string, out interface{}, sort string, p int, 
 }
 
 //插入数据到数据库
-func (d *DB) Insert(table string, data ReflectInterface, column ...string) (err error) {
+func (d *DB) Insert(table string, data ReflectInterface, column ...string) (string, error) {
 	var re *string
 	var reStr *string
 	var relSlice *[]interface{}
 
-	relSlice, re, reStr, err = data.AllReflect()
+	relSlice, re, reStr, err := data.AllReflect()
 	if err != nil {
-		return
+		return "", err
 	}
 
-	_, err = d.Pool.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
-	if err != nil {
-		return
-	}
-	return
+	rel, err := d.Pool.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
+	relStr := string(rel)
+
+	return relStr, err
 }
 
 //更新数据到数据库

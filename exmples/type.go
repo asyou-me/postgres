@@ -7,7 +7,7 @@ import (
   "fmt"
 )
 
-type User struct { 
+ type User struct { 
     Id   string `json:"id"`
     Nick   string `json:"nick"`
     Email   string `json:"email"`
@@ -55,39 +55,6 @@ func (this *User) Reflect(column []string) (*[]interface{},*string, error) {
   rel_str= strings.TrimRight(rel_str, ",")
   return &rel,&rel_str, nil
 }
-
-/*func (this *User) ColumnReflect(column []string) (*[]interface{}, *string, error) {
-  rel := ""
-  rel_s :=make([]interface{}, 0, 10)
-
-  for k, v := range column {
-    rel = rel+v+"=$"+fmt.Sprintf("%d",k+1)+","
-    switch v { 
-    case "id":
-      rel_s = append(rel_s,this.Id)
-    case "nick":
-      rel_s = append(rel_s,this.Nick)
-    case "email":
-      rel_s = append(rel_s,this.Email)
-    case "passwd":
-      rel_s = append(rel_s,this.Passwd)
-    case "created":
-      rel_s = append(rel_s,this.created)
-    case "updated":
-      rel_s = append(rel_s,this.Updated)
-    case "deleted":
-      rel_s = append(rel_s,this.Deleted)
-    case "active":
-      rel_s = append(rel_s,this.Active)
-    case "attr":
-      rel_s = append(rel_s,this.Attr)
-    default:
-      return &rel_s, &rel, errors.New(v + ",字段不存在")
-    }
-  }
-  rel = strings.TrimRight(rel, ",")
-  return &rel_s, &rel,  nil
-}*/
 
 func (this *User) AllReflect() (*[]interface{},*string,*string,error) {
   rel := &User_all_column
@@ -141,20 +108,25 @@ func (this *User) TableName() string {
 func (this *User) AppendSelf(all interface{})error{
    all_data,ok := all.(*[]User)
    if ok==false{
-    return errors.New("传入结构和表名不符")
+    all_data2,ok2 := all.(*[]*User)
+    if ok2==false {
+      return errors.New("传入结构和表名不符")
+    }
+    *all_data2 = append(*all_data2, this)
+    return nil
    }
   *all_data = append(*all_data, *this)
   return nil
 }
 
-
-func UserNew() postgres.ReflectInterface{
+func NewUser() postgres.ReflectInterface{
   return new(User)
 }
 
-type Test struct { 
-    D   *map[string]string `json:"d"`
+func UserTest() {
+    fmt.Println("start sqlmap")
 }
+
 
 var Test_all_column = "d"
 var Test_all_column_index = "$1"
@@ -177,23 +149,6 @@ func (this *Test) Reflect(column []string) (*[]interface{},*string, error) {
   return &rel,&rel_str, nil
 }
 
-/*func (this *Test) ColumnReflect(column []string) (*[]interface{}, *string, error) {
-  rel := ""
-  rel_s :=make([]interface{}, 0, 10)
-
-  for k, v := range column {
-    rel = rel+v+"=$"+fmt.Sprintf("%d",k+1)+","
-    switch v { 
-    case "d":
-      rel_s = append(rel_s,this.D)
-    default:
-      return &rel_s, &rel, errors.New(v + ",字段不存在")
-    }
-  }
-  rel = strings.TrimRight(rel, ",")
-  return &rel_s, &rel,  nil
-}*/
-
 func (this *Test) AllReflect() (*[]interface{},*string,*string,error) {
   rel := &Test_all_column
   rel_str := &Test_all_column_index
@@ -214,20 +169,25 @@ func (this *Test) TableName() string {
 func (this *Test) AppendSelf(all interface{})error{
    all_data,ok := all.(*[]Test)
    if ok==false{
-    return errors.New("传入结构和表名不符")
+    all_data2,ok2 := all.(*[]*Test)
+    if ok2==false {
+      return errors.New("传入结构和表名不符")
+    }
+    *all_data2 = append(*all_data2, this)
+    return nil
    }
   *all_data = append(*all_data, *this)
   return nil
 }
 
-
-func TestNew() postgres.ReflectInterface{
+func NewTest() postgres.ReflectInterface{
   return new(Test)
 }
 
-
-
-
-func test() {
+func TestTest() {
     fmt.Println("start sqlmap")
 }
+
+
+
+

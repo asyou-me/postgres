@@ -32,8 +32,8 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Loger) error {
 			Password: conf.Secret,
 			Database: conf.Attr["Database"].(string),
 		},
-		MaxConnections: int(conf.Attr["MaxConnections"].(int)),
-		AcquireTimeout: time.Second * time.Duration(conf.Attr["AcquireTimeout"].(int)),
+		MaxConnections: int(conf.Attr["MaxConnections"].(float64)),
+		AcquireTimeout: time.Second * time.Duration(conf.Attr["AcquireTimeout"].(float64)),
 	}
 
 	d.Pool, err = pgx.NewConnPool(connConfig)

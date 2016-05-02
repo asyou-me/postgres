@@ -7,7 +7,7 @@ import (
 type InputType struct {
 	Package string       `json:"package"`
 	Tables  []InputTable `json:"tables"`
-	Decorat string       `json:"decorat"`
+	Level   int8         `json:"level"`
 }
 
 type InputTable struct {
@@ -15,6 +15,7 @@ type InputTable struct {
 	StructName    string   `json:"struct_name"`
 	ColumnsString []string `json:"columns"`
 	Columns       []InputColumn
+	ShowStruct    bool `json:"show_struct"`
 }
 
 type InputColumn struct {
