@@ -13,7 +13,7 @@ import (
     {{$v2.StructName}}   {{$v2.Type}} ` + "`" + `{{$v2.Tag}}` + "`" + `{{end}}
 }{{end}}
 
-var {{$v.StructName}}_all_column = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}{{$v2.Name}}{{end}}"
+var {{$v.StructName}}_all_column = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}'{{$v2.Name}}'{{end}}"
 var {{$v.StructName}}_all_column_index = "{{range $k2, $v2 := $v.Columns}}{{if $k2}},{{else}}{{end}}${{add $k2}}{{end}}"
 
 func (this *{{$v.StructName}}) Reflect(column []string) (*[]interface{},*string, error) {

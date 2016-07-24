@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"errors"
+	"fmt"
 )
 
 /*开启一个事务
@@ -135,6 +136,8 @@ func (d *DB) Insert(table string, data ReflectInterface, column ...string) (stri
 	if err != nil {
 		return "", err
 	}
+
+	fmt.Println(`INSERT INTO "` + table + `" (` + *re + `) VALUES (` + *reStr + `)`)
 
 	rel, err := d.Pool.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
 	relStr := string(rel)

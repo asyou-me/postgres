@@ -5,7 +5,7 @@ import (
 
 	"github.com/jackc/pgx"
 
-	pulic_type "github.com/asyoume/lib/pulic_type"
+	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
 type NewFunc func() ReflectInterface
@@ -17,11 +17,11 @@ var (
 type DB struct {
 	//数据操作连接
 	Pool     *pgx.ConnPool
-	loger    pulic_type.Loger
+	loger    pulic_type.Logger
 	TableMap map[string]NewFunc
 }
 
-func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Loger) error {
+func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error {
 	//初始化数据库
 	var err error
 
@@ -32,8 +32,8 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Loger) error {
 			Password: conf.Secret,
 			Database: conf.Attr["Database"].(string),
 		},
-		MaxConnections: int(conf.Attr["MaxConnections"].(float64)),
-		AcquireTimeout: time.Second * time.Duration(conf.Attr["AcquireTimeout"].(float64)),
+		MaxConnections: int(conf.Attr["MaxConnections"].(int)),
+		AcquireTimeout: time.Second * time.Duration(conf.Attr["AcquireTimeout"].(int)),
 	}
 
 	d.Pool, err = pgx.NewConnPool(connConfig)
@@ -43,7 +43,7 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Loger) error {
 }
 
 //定义新建数据库操作对象的当法
-func NewDB(conf *pulic_type.MicroSerType, loger pulic_type.Loger) (*DB, error) {
+func NewDB(conf *pulic_type.MicroSerType, loger pulic_type.Logger) (*DB, error) {
 	db := DB{}
 	db.TableMap = map[string]NewFunc{}
 	err := db.Open(conf, loger)

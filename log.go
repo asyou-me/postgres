@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	pulic_type "github.com/asyoume/lib/pulic_type"
+	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
 type DBLog struct {
@@ -24,7 +24,7 @@ func (l *DBLog) SetTime(t int64) {
 	l.Time = t
 }
 
-func (this *DB) SetLog(log pulic_type.Loger) {
+func (this *DB) SetLog(log pulic_type.Logger) {
 	this.loger = log
 }
 

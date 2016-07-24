@@ -19,7 +19,7 @@ import (
     Attr   string `json:"attr"`
 }
 
-var User_all_column = "id,nick,email,passwd,created,updated,deleted,active,attr"
+var User_all_column = "\"id\",\"nick\",\"email\",\"passwd\",\"created\",\"updated\",\"deleted\",\"active\",\"attr\""
 var User_all_column_index = "$1,$2,$3,$4,$5,$6,$7,$8,$9"
 
 func (this *User) Reflect(column []string) (*[]interface{},*string, error) {
@@ -128,7 +128,7 @@ func UserTest() {
 }
 
 
-var Test_all_column = "d"
+var Test_all_column = "\"d\""
 var Test_all_column_index = "$1"
 
 func (this *Test) Reflect(column []string) (*[]interface{},*string, error) {
