@@ -8,7 +8,7 @@ import (
 	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
-type NewFunc func() ReflectInterface
+type NewFunc func() ReflectTableInterface
 
 var (
 	AllColumn = []string{}

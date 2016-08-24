@@ -1,13 +1,15 @@
 package postgres
 
-import (
-	"database/sql"
-	//"errors"
+import
+
+//"errors"
+(
+	"github.com/jackc/pgx"
 	_ "github.com/lib/pq"
 )
 
 type Session struct {
-	Tx *sql.Tx
+	Tx *pgx.Tx
 	DB *DB
 }
 

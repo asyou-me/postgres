@@ -19,7 +19,7 @@ import (
     Attr   string `json:"attr"`
 }
 
-var User_all_column = "\"id\",\"nick\",\"email\",\"passwd\",\"created\",\"updated\",\"deleted\",\"active\",\"attr\""
+var User_all_column = "'id','nick','email','passwd','created','updated','deleted','active','attr'"
 var User_all_column_index = "$1,$2,$3,$4,$5,$6,$7,$8,$9"
 
 func (this *User) Reflect(column []string) (*[]interface{},*string, error) {
@@ -119,7 +119,7 @@ func (this *User) AppendSelf(all interface{})error{
   return nil
 }
 
-func NewUser() postgres.ReflectInterface{
+func NewUser() postgres.ReflectTableInterface{
   return new(User)
 }
 
@@ -128,7 +128,7 @@ func UserTest() {
 }
 
 
-var Test_all_column = "\"d\""
+var Test_all_column = "'d'"
 var Test_all_column_index = "$1"
 
 func (this *Test) Reflect(column []string) (*[]interface{},*string, error) {
@@ -180,7 +180,7 @@ func (this *Test) AppendSelf(all interface{})error{
   return nil
 }
 
-func NewTest() postgres.ReflectInterface{
+func NewTest() postgres.ReflectTableInterface{
   return new(Test)
 }
 

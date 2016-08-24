@@ -1,11 +1,8 @@
 package postgres
 
-import (
-	"errors"
-	"fmt"
-)
+import "errors"
 
-/*开启一个事务
+// Begin 开启一个事务
 func (d *DB) Begin() (*Session, error) {
 	s, err := d.Pool.Begin()
 	session := &Session{}
@@ -15,14 +12,14 @@ func (d *DB) Begin() (*Session, error) {
 	session.Tx = s
 	session.DB = d
 	return session, nil
-}*/
+}
 
-//获取单条查询结构
-//param1:数据库表的名字
-//param2:查询条件 sql写法 where xxx
-//param3:查询后返回结果需要放入的对象
-//param4:查询返回的结果需要包含的字段
-func (this *DB) One(table string, req string, out ReflectInterface, column ...string) (err error) {
+// One 获取单条查询结构
+// param1:数据库表的名字
+// param2:查询条件 sql写法 where xxx
+// param3:查询后返回结果需要放入的对象
+// param4:查询返回的结果需要包含的字段
+func (d *DB) One(req string, out ReflectTableInterface, column ...string) (err error) {
 	var relSlice *[]interface{}
 	var reStr *string
 
@@ -36,22 +33,23 @@ func (this *DB) One(table string, req string, out ReflectInterface, column ...st
 		return err
 	}
 
+	table := out.TableName()
 	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + req
-	err = this.Pool.QueryRow(query).Scan(*relSlice...)
+	err = d.Pool.QueryRow(query).Scan(*relSlice...)
 
-	this.Info(query)
+	d.Info(query)
 
 	return err
 }
 
-//获取单条查询结构
-//param1:数据库表的名字
-//param2:查询条件 sql写法 where xxx
-//param3:查询后返回结果需要放入的对象
-//param4:查询返回的结果需要包含的字段
-//param5:排序相关的写法 order by xxx
-//param6:查询数据的页数
-//param7:查询数据的每页条数
+// All 获取单条查询结构
+// param1:数据库表的名字
+// param2:查询条件 sql写法 where xxx
+// param3:查询后返回结果需要放入的对象
+// param4:查询返回的结果需要包含的字段
+// param5:排序相关的写法 order by xxx
+// param6:查询数据的页数
+// param7:查询数据的每页条数
 func (d *DB) All(table string, req string, sort string,
 	out interface{}, limit int16, offset int64,
 	column ...string) (err error) {
@@ -74,7 +72,7 @@ func (d *DB) All(table string, req string, sort string,
 	}
 
 	if err != nil {
-		//d.loger.Warn("该处需要错误日志系统", err)
+		d.Warn(err.Error())
 		return err
 	}
 
@@ -83,15 +81,10 @@ func (d *DB) All(table string, req string, sort string,
 
 	d.Info(query)
 	if err != nil {
+		rows.Close()
 		d.Warn(err.Error())
-		//d.loger.Warn("该处需要错误日志系统", err)
 		return err
 	}
-
-	/*outrans, ok := out.(*[]ReflectInterface)
-	if !ok {
-		return errors.New("传入列表结构错误")
-	}*/
 
 	var i = 0
 	for rows.Next() {
@@ -115,7 +108,6 @@ func (d *DB) All(table string, req string, sort string,
 		err = rows.Scan(*relSlice...)
 		if err != nil {
 			d.Warn(err.Error())
-			//d.loger.Warn("该处需要错误日志系统", err)
 			continue
 		}
 
@@ -126,8 +118,8 @@ func (d *DB) All(table string, req string, sort string,
 	return nil
 }
 
-//插入数据到数据库
-func (d *DB) Insert(table string, data ReflectInterface, column ...string) (string, error) {
+// Insert 插入数据到数据库
+func (d *DB) Insert(data ReflectTableInterface, column ...string) (string, error) {
 	var re *string
 	var reStr *string
 	var relSlice *[]interface{}
@@ -137,20 +129,19 @@ func (d *DB) Insert(table string, data ReflectInterface, column ...string) (stri
 		return "", err
 	}
 
-	fmt.Println(`INSERT INTO "` + table + `" (` + *re + `) VALUES (` + *reStr + `)`)
-
+	table := data.TableName()
 	rel, err := d.Pool.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
 	relStr := string(rel)
 
 	return relStr, err
 }
 
-//更新数据到数据库
-//param1:更新数据的表
-//param2:查询条件 sql写法 where xxx
-//param3:需要更新的数据的对象
-//param4:需要更新的字段
-func (d *DB) Update(table string, req string, data ReflectInterface, column []string) (err error) {
+// Update 更新数据到数据库
+// param1:更新数据的表
+// param2:查询条件 sql写法 where xxx
+// param3:需要更新的数据的对象
+// param4:需要更新的字段
+func (d *DB) Update(req string, data ReflectTableInterface, column []string) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
 	}
@@ -163,6 +154,7 @@ func (d *DB) Update(table string, req string, data ReflectInterface, column []st
 		return
 	}
 
+	table := data.TableName()
 	_, err = d.Pool.Exec(`UPDATE "`+table+`" SET  `+*re+` `+req, *relSlice...)
 	if err != nil {
 		return
@@ -170,9 +162,9 @@ func (d *DB) Update(table string, req string, data ReflectInterface, column []st
 	return
 }
 
-//删除数据
-//param1:删除数据的表
-//param2:条件sql写法 where xxx
+// Del 删除数据
+// param1:删除数据的表
+// param2:条件sql写法 where xxx
 func (d *DB) Del(table string, req string) (err error) {
 	_, err = d.Pool.Exec(`DELETE FROM ` + table + ` ` + req)
 	if err != nil {
@@ -181,9 +173,9 @@ func (d *DB) Del(table string, req string) (err error) {
 	return
 }
 
-//获取数据的条数
-//param1:数据的表
-//param2:条件sql写法 where xxx
+// Count 获取数据的条数
+// param1:数据的表
+// param2:条件sql写法 where xxx
 func (d *DB) Count(table string, req string) int64 {
 	var re int64
 	err := d.Pool.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + req).Scan(&re)

@@ -65,7 +65,7 @@ func (this *{{$v.StructName}}) AppendSelf(all interface{})error{
   return nil
 }
 
-func New{{$v.StructName}}() postgres.ReflectInterface{
+func New{{$v.StructName}}() postgres.ReflectTableInterface{
   return new({{$v.StructName}})
 }
 
