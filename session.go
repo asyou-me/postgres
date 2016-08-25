@@ -1,24 +1,21 @@
 package postgres
 
-import
-
-//"errors"
-(
+import (
 	"github.com/jackc/pgx"
-	_ "github.com/lib/pq"
 )
 
+// Session 数据库会话
 type Session struct {
 	Tx *pgx.Tx
 	DB *DB
 }
 
-//提交一个事务
+// Commit 提交一个事务
 func (s *Session) Commit() error {
 	return s.Tx.Commit()
 }
 
-//回滚一个事务
+// Rollback 回滚一个事务
 func (s *Session) Rollback() error {
 	return s.Tx.Rollback()
 }

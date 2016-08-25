@@ -137,10 +137,9 @@ func (d *DB) Insert(data ReflectTableInterface, column ...string) (string, error
 }
 
 // Update 更新数据到数据库
-// param1:更新数据的表
-// param2:查询条件 sql写法 where xxx
-// param3:需要更新的数据的对象
-// param4:需要更新的字段
+// req:查询条件 sql写法 where xxx
+// data:需要更新的数据的对象
+// column:需要更新的字段
 func (d *DB) Update(req string, data ReflectTableInterface, column []string) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
@@ -163,8 +162,8 @@ func (d *DB) Update(req string, data ReflectTableInterface, column []string) (er
 }
 
 // Del 删除数据
-// param1:删除数据的表
-// param2:条件sql写法 where xxx
+// table:删除数据的表
+// req:条件sql写法 where xxx
 func (d *DB) Del(table string, req string) (err error) {
 	_, err = d.Pool.Exec(`DELETE FROM ` + table + ` ` + req)
 	if err != nil {
@@ -174,8 +173,8 @@ func (d *DB) Del(table string, req string) (err error) {
 }
 
 // Count 获取数据的条数
-// param1:数据的表
-// param2:条件sql写法 where xxx
+// table:数据的表
+// req:条件sql写法 where xxx
 func (d *DB) Count(table string, req string) int64 {
 	var re int64
 	err := d.Pool.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + req).Scan(&re)
