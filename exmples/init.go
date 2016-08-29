@@ -3,7 +3,7 @@ package exmples
 import (
 	"github.com/asyoume/postgres"
 
-	pulic_type "github.com/asyoume/lib/pulic_type"
+	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
 var (

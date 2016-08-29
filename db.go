@@ -1,3 +1,6 @@
+/*
+数据库处理对象
+*/
 package postgres
 
 import (
@@ -15,7 +18,7 @@ var (
 )
 
 type DB struct {
-	//数据操作连接
+	//数据操作连接池
 	Pool     *pgx.ConnPool
 	loger    pulic_type.Logger
 	TableMap map[string]NewFunc

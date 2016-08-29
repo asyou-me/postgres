@@ -5,7 +5,7 @@ import (
 	"testing"
 	//"time"
 
-	pulic_type "github.com/asyoume/lib/pulic_type"
+	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
 var connConfig = pulic_type.MicroSerType{
