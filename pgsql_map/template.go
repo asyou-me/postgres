@@ -70,7 +70,7 @@ func New{{$v.StructName}}() postgres.ReflectTable{
 }
 
 func {{$v.StructName}}Test() {
-    fmt.Println("start sqlmap")
+   fmt.Println("start sqlmap")
 }
 {{end}}
 
