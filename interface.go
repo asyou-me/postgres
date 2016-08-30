@@ -1,6 +1,7 @@
 package postgres
 
-type ReflectTableInterface interface {
+//
+type ReflectTable interface {
 	Reflect(column []string) (*[]interface{}, *string, error)
 	AllReflect() (*[]interface{}, *string, *string, error)
 	TableName() string

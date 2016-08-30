@@ -2,6 +2,7 @@ package postgres
 
 import "errors"
 
+// QueryBuilder 数据查询构造器
 type QueryBuilder struct {
 	Engine *DB
 	table  string
@@ -13,20 +14,24 @@ type QueryBuilder struct {
 	order []string
 }
 
+// Table 数据查询的表
 func (q *QueryBuilder) Table(table string) {
 	q.table = table
 }
 
+// Where 数据查询条件
 func (q *QueryBuilder) Where(sql string, args ...interface{}) {
 	q.where = sql
 	q.args = args
 }
 
+// OrderBy 数据排序条件
 func (q *QueryBuilder) OrderBy(sql ...string) {
 	q.order = sql
 }
 
-func (q *QueryBuilder) Scan(out ReflectTableInterface) error {
+// Scan 查询一条数据
+func (q *QueryBuilder) Scan(out ReflectTable) error {
 	var relSlice *[]interface{}
 	var reStr *string
 	var err error
@@ -50,6 +55,7 @@ func (q *QueryBuilder) Scan(out ReflectTableInterface) error {
 	return err
 }
 
+// Scans 查询多条数据
 func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 	var relSlice *[]interface{}
 	var reStr *string
@@ -129,10 +135,12 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 	return nil
 }
 
-func (q *QueryBuilder) Set(out GSTYPE) error {
+// Set 设定数据
+func (q *QueryBuilder) Set(out []GSTYPE) error {
 	return nil
 }
 
-func (q *QueryBuilder) Get(out GSTYPE) error {
+// Get 获取数据
+func (q *QueryBuilder) Get(out []GSTYPE) error {
 	return nil
 }

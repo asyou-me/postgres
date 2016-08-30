@@ -11,7 +11,7 @@ import (
 	pulic_type "github.com/asyoume/lib.v1/pulic_type"
 )
 
-type NewFunc func() ReflectTableInterface
+type NewFunc func() ReflectTable
 
 var (
 	AllColumn = []string{}

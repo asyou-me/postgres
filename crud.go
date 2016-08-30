@@ -15,7 +15,7 @@ func (d *DB) Begin() (*Session, error) {
 }
 
 // Insert 插入数据到数据库
-func (d *DB) Insert(data ReflectTableInterface, column ...string) (string, error) {
+func (d *DB) Insert(data ReflectTable, column ...string) (string, error) {
 	var re *string
 	var reStr *string
 	var relSlice *[]interface{}
@@ -39,7 +39,7 @@ func (d *DB) Insert(data ReflectTableInterface, column ...string) (string, error
 // data:需要更新的数据的对象
 //
 // column:需要更新的字段
-func (d *DB) Update(req string, data ReflectTableInterface, column []string) (err error) {
+func (d *DB) Update(req string, data ReflectTable, column []string) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
 	}
