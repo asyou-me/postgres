@@ -5,7 +5,7 @@ import (
 )
 
 type dbLog struct {
-	Id    string `json:"id"`
+	ID    string `json:"id"`
 	Type  string `json:"type"`
 	Msg   string `json:"type"`
 	Level string `json:"level"`
@@ -24,54 +24,55 @@ func (l *dbLog) SetTime(t int64) {
 	l.Time = t
 }
 
-func (this *DB) SetLog(log pulic_type.Logger) {
-	this.loger = log
+// SetLog 定义数据库记录对象
+func (db *DB) SetLog(log pulic_type.Logger) {
+	db.loger = log
 }
 
-//传入debug日志
-func (this *DB) Debug(str string) {
+// Debug 传入debug日志
+func (db *DB) Debug(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Debug(log)
+	db.loger.Debug(log)
 }
 
-//传入info日志
-func (this *DB) Info(str string) {
+// Info 传入info日志
+func (db *DB) Info(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Info(log)
+	db.loger.Info(log)
 }
 
-//传入Print日志
-func (this *DB) Print(str string) {
+// Print 传入Print日志
+func (db *DB) Print(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Print(log)
+	db.loger.Print(log)
 }
 
-//传入Warn日志
-func (this *DB) Warn(str string) {
+// Warn 传入Warn日志
+func (db *DB) Warn(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Warn(log)
+	db.loger.Warn(log)
 }
 
-//传入Error日志
-func (this *DB) Error(str string) {
+// Error 传入Error日志
+func (db *DB) Error(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Error(log)
+	db.loger.Error(log)
 }
 
-//传入Fatal日志
-func (this *DB) Fatal(str string) {
+// Fatal 传入Fatal日志
+func (db *DB) Fatal(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	this.loger.Fatal(log)
+	db.loger.Fatal(log)
 }

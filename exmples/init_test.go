@@ -61,7 +61,7 @@ func TestInit(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = DB.Insert("test", &Test{D: &map[string]string{"xiaobai": "zheshi"}})
+	err = DB.Insert(&Test{D: &map[string]string{"xiaobai": "zheshi"}})
 	fmt.Println("err:", err)
 
 	data2 := &Test{}
