@@ -1,5 +1,5 @@
 /*
-数据库处理对象
+Package postgres 数据库处理对象
 */
 package postgres
 

@@ -54,9 +54,6 @@ func (d *DB) Update(req string, data ReflectTable, column []string) (err error) 
 
 	table := data.TableName()
 	_, err = d.Pool.Exec(`UPDATE "`+table+`" SET  `+*re+` `+req, *relSlice...)
-	if err != nil {
-		return
-	}
 	return
 }
 

@@ -1,6 +1,9 @@
 package postgres
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // QueryBuilder 数据查询构造器
 type QueryBuilder struct {
@@ -139,11 +142,25 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 }
 
 // Set 设定数据
-func (q *QueryBuilder) Set(out []GSTYPE) error {
-	return nil
+func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
+	var sets = ""
+	var values = make([]interface{}, len(out))
+	for k, v := range out {
+		sets = sets + `jsonb_ set(` + v.Key + `,'{` + v.Path + `}','$` + fmt.Sprint(k+1) + `'::jsonb,true)`
+		values[k] = v
+	}
+	_, err = q.Engine.Pool.Exec(`UPDATE "`+q.table+`" SET `+sets, values...)
+	return
 }
 
 // Get 获取数据
-func (q *QueryBuilder) Get(out []GSTYPE) error {
-	return nil
+func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
+	var sets = ""
+	var values = make([]interface{}, len(out))
+	for k, v := range out {
+		sets = sets + `jsonb_ set(` + v.Key + `,'{` + v.Path + `}','$` + fmt.Sprint(k+1) + `'::jsonb,true)`
+		values[k] = &v
+	}
+	err = q.Engine.Pool.QueryRow(`SELECT ` + sets + ` FROM "` + q.table + `" `).Scan(values)
+	return
 }
