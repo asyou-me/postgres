@@ -15,19 +15,22 @@ type QueryBuilder struct {
 }
 
 // Table 数据查询的表
-func (q *QueryBuilder) Table(table string) {
+func (q *QueryBuilder) Table(table string) *QueryBuilder {
 	q.table = table
+	return q
 }
 
 // Where 数据查询条件
-func (q *QueryBuilder) Where(sql string, args ...interface{}) {
+func (q *QueryBuilder) Where(sql string, args ...interface{}) *QueryBuilder {
 	q.where = sql
 	q.args = args
+	return q
 }
 
 // OrderBy 数据排序条件
-func (q *QueryBuilder) OrderBy(sql ...string) {
+func (q *QueryBuilder) OrderBy(sql ...string) *QueryBuilder {
 	q.order = sql
+	return q
 }
 
 // Scan 查询一条数据

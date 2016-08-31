@@ -124,7 +124,7 @@ func NewUser() postgres.ReflectTable{
 }
 
 func UserTest() {
-    fmt.Println("start sqlmap")
+   fmt.Println("start sqlmap")
 }
 
 
@@ -185,7 +185,7 @@ func NewTest() postgres.ReflectTable{
 }
 
 func TestTest() {
-    fmt.Println("start sqlmap")
+   fmt.Println("start sqlmap")
 }
 
 
