@@ -18,6 +18,7 @@
 	}, {
 		"name": "test",
 		"struct_name": "Test",
+		"show_struct": true,
 		"columns": [
 			"d,D,*map[string]string,&map[string]string{},json:\"d\""
 		]

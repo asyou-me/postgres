@@ -43,6 +43,7 @@ func (d *DB) Update(req string, data ReflectTable, column []string) (err error) 
 	if req == "" {
 		return errors.New("更新条件不能为空")
 	}
+	req = "WHERE " + req
 	var re *string
 	var relSlice *[]interface{}
 
@@ -63,6 +64,9 @@ func (d *DB) Update(req string, data ReflectTable, column []string) (err error) 
 //
 // req:条件sql写法 where xxx
 func (d *DB) Del(table string, req string) (err error) {
+	if req != "" {
+		req = "WHERE " + req
+	}
 	_, err = d.Pool.Exec(`DELETE FROM ` + table + ` ` + req)
 	if err != nil {
 		return

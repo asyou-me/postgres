@@ -53,7 +53,7 @@ func (q *QueryBuilder) Scan(out ReflectTable) error {
 	}
 
 	table := out.TableName()
-	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + q.where
+	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + q.whereStr()
 	err = q.Engine.Pool.QueryRow(query).Scan(*relSlice...)
 
 	q.Engine.Info(query)
@@ -73,6 +73,7 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 	var offset int64
 	var table = q.table
 	var column = q.column
+	var argsLen = len(q.args)
 
 	argLen := len(args)
 	if argLen == 2 {
@@ -85,6 +86,7 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 		limit = 10
 		offset = 0
 	}
+	q.args = append(q.args, offset, limit)
 
 	if newFunc, ok = q.Engine.TableMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
@@ -102,13 +104,13 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 		return err
 	}
 
-	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + q.where + ` ` + "" + ` LIMIT $1 OFFSET $2`
-	rows, err := q.Engine.Pool.Query(query, args, limit, offset)
-
+	query := `SELECT ` + *reStr + ` FROM "` + table + `"` + q.whereStr() + "" + ` LIMIT $` + fmt.Sprint(argsLen+1) + ` OFFSET $` + fmt.Sprint(argsLen+2)
 	q.Engine.Info(query)
+	rows, err := q.Engine.Pool.Query(query, q.args...)
+
 	if err != nil {
 		rows.Close()
-		q.Engine.Warn(err.Error())
+		q.Engine.Error(err.Error())
 		return err
 	}
 
@@ -124,7 +126,6 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 
 			if err != nil {
 				q.Engine.Warn(err.Error())
-				//q.Engine.loger.Warn("该处需要错误日志系统", err)
 				continue
 			}
 		}
@@ -141,26 +142,43 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 	return nil
 }
 
-// Set 设定数据
+// Set 设定jsonb数据
 func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
 	var sets = ""
-	var values = make([]interface{}, len(out))
+	var lenOut = len(out)
+	var indexOut = lenOut - 1
+	var values = make([]interface{}, lenOut)
 	for k, v := range out {
-		sets = sets + `jsonb_ set(` + v.Key + `,'{` + v.Path + `}','$` + fmt.Sprint(k+1) + `'::jsonb,true)`
-		values[k] = v
+		if k == indexOut {
+			sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true)`
+		} else {
+			sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true),`
+		}
+		values[k] = v.Value
 	}
-	_, err = q.Engine.Pool.Exec(`UPDATE "`+q.table+`" SET `+sets, values...)
+	_, err = q.Engine.Pool.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
 	return
 }
 
-// Get 获取数据
+// Get 获取jsonb数据
 func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
-	var sets = ""
+	var gets = ""
 	var values = make([]interface{}, len(out))
+	var indexOut = len(out) - 1
 	for k, v := range out {
-		sets = sets + `jsonb_ set(` + v.Key + `,'{` + v.Path + `}','$` + fmt.Sprint(k+1) + `'::jsonb,true)`
-		values[k] = &v
+		if k == indexOut {
+			gets = gets + v.Key + `#>>'{` + v.Path + `}'`
+		} else {
+			gets = gets + v.Key + `#>>'{` + v.Path + `}',`
+		}
+		values[k] = &out[k].Value
 	}
-	err = q.Engine.Pool.QueryRow(`SELECT ` + sets + ` FROM "` + q.table + `" `).Scan(values)
-	return
+	return q.Engine.Pool.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+}
+
+func (q *QueryBuilder) whereStr() string {
+	if q.where != "" {
+		return " WHERE " + q.where
+	}
+	return ""
 }

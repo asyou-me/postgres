@@ -1,17 +1,20 @@
 package exmples
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 	//"time"
 
 	pulic_type "github.com/asyoume/lib.v1/pulic_type"
+	"github.com/asyoume/postgres"
 )
 
+var logger pulic_type.Logger = &pulic_type.DefalutLogger{}
+
 var connConfig = pulic_type.MicroSerType{
-	Addr:   "xxxx",
-	Id:     "xxxx",
-	Secret: "xxxx",
+	Addr:   "jxspy.com",
+	Id:     "postgres",
+	Secret: "Jx201501",
 
 	Attr: map[string]interface{}{
 		"Database":       "test",
@@ -20,57 +23,58 @@ var connConfig = pulic_type.MicroSerType{
 	},
 }
 
-type Loger struct {
-}
-
-func (this *Loger) Debug(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Info(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Print(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Warn(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Warning(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Error(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Fatal(args ...interface{}) {
-	fmt.Println(args)
-}
-
-func (this *Loger) Panic(args ...interface{}) {
-	fmt.Println(args)
-}
-
 func TestInit(t *testing.T) {
-	err := Init(&connConfig, &Loger{})
+	err := Init(&connConfig, logger)
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = DB.Insert(&Test{D: &map[string]string{"xiaobai": "zheshi"}})
-	fmt.Println("err:", err)
+	_, err = DB.Insert(&Test{D: &map[string]string{"xiaobai": "zheshi"}})
+	if err != nil {
+		t.Log(err)
+	}
 
 	data2 := &Test{}
-	err = DB.One("test", ` WHERE d@>'{"xiaobai": "zheshi"}'`, data2)
-	fmt.Println("err:", err)
-	fmt.Println(data2.D)
+	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scan(data2)
+	if err != nil || (*data2.D)["xiaobai"] != "zheshi" {
+		t.Log(err)
+	}
 
 	dataList := &[]Test{}
-	err = DB.All("test", ` WHERE d@>'{"xiaobai": "zheshi"}'`, dataList, "", 1, 10)
-	fmt.Println("err:", err)
-	fmt.Println(dataList)
+	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scans(dataList, 1, 10)
+	if err != nil {
+		t.Log(err)
+	}
+
+	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Set([]postgres.GSTYPE{
+		postgres.GSTYPE{
+			Path:  "xiaobai",
+			Key:   "d",
+			Value: "\"xiugaihou\"",
+		},
+	})
+	if err != nil {
+		t.Log(err)
+	}
+
+	data3 := []postgres.GSTYPE{
+		postgres.GSTYPE{
+			Path:  "xiaobai",
+			Key:   "d",
+			Value: "",
+		},
+	}
+	err = DB.Table("test").Get(data3)
+	if err != nil {
+		t.Log(err)
+	}
+
+	if data3[0].Value != "xiugaihou" {
+		t.Log(errors.New("Get error"))
+	}
+
+	err = DB.Del("test", `d@>'{"xiaobai": "zheshi"}'`)
+	if err != nil {
+		t.Log(err)
+	}
 }

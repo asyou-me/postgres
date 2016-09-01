@@ -10,10 +10,9 @@ var (
 	DB *postgres.DB
 )
 
-func Init(conf *pulic_type.MicroSerType, loger pulic_type.Loger) error {
+func Init(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error {
 	var err error
 	DB, err = postgres.NewDB(conf, loger)
-
-	DB.TableMap["test"] = TestNew
+	DB.TableMap["test"] = NewTest
 	return err
 }
