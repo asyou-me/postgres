@@ -4,7 +4,7 @@ var tmp = `package {{.Package}}
 
 import (
   "errors"
-  "github.com/asyoume/postgres"
+  "github.com/asyou-me/postgres"
   "strings"
   "fmt"
 )

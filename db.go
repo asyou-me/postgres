@@ -8,7 +8,7 @@ import (
 
 	"github.com/jackc/pgx"
 
-	pulic_type "github.com/asyoume/lib.v1/pulic_type"
+	pulic_type "github.com/asyou-me/lib.v1/pulic_type"
 )
 
 // NewFunc 创建一个新的数据库对象的方法
@@ -22,7 +22,7 @@ var (
 // DB 数据库处理对象
 type DB struct {
 	//数据操作连接池
-	Pool     *pgx.ConnPool
+	*pgx.ConnPool
 	loger    pulic_type.Logger
 	TableMap map[string]NewFunc
 }
@@ -44,7 +44,7 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error 
 		AcquireTimeout: time.Second * time.Duration(conf.Attr["AcquireTimeout"].(int)),
 	}
 
-	d.Pool, err = pgx.NewConnPool(connConfig)
+	d.ConnPool, err = pgx.NewConnPool(connConfig)
 	//传入外部日志模块
 	d.loger = loger
 	return err

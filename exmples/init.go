@@ -1,9 +1,9 @@
 package exmples
 
 import (
-	"github.com/asyoume/postgres"
+	"github.com/asyou-me/postgres"
 
-	pulic_type "github.com/asyoume/lib.v1/pulic_type"
+	pulic_type "github.com/asyou-me/lib.v1/pulic_type"
 )
 
 var (

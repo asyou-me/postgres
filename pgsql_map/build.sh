@@ -8,7 +8,7 @@ while [ -h "$SOURCE"  ]; do # resolve $SOURCE until the file is no longer a syml
 done
 DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd  )"
 
-out=`go install github.com/asyoume/postgres/pgsql_map  2>&1 >/dev/null`
+out=`go install github.com/asyou-me/postgres/pgsql_map  2>&1 >/dev/null`
 
 if [ $? -eq 0 ];then
    echo  -e  "\033[32m程序编译成功,开始测试例子\033[0m"

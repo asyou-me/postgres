@@ -6,8 +6,8 @@ import (
 	"testing"
 	//"time"
 
-	pulic_type "github.com/asyoume/lib.v1/pulic_type"
-	"github.com/asyoume/postgres"
+	pulic_type "github.com/asyou-me/lib.v1/pulic_type"
+	"github.com/asyou-me/postgres"
 )
 
 var logger pulic_type.Logger = &pulic_type.DefalutLogger{}

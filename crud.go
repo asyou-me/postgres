@@ -4,7 +4,7 @@ import "errors"
 
 // Begin 开启一个事务
 func (d *DB) Begin() (*Session, error) {
-	s, err := d.Pool.Begin()
+	s, err := d.ConnPool.Begin()
 	session := &Session{}
 	if err != nil {
 		return session, err
@@ -26,7 +26,7 @@ func (d *DB) Insert(data ReflectTable, column ...string) (string, error) {
 	}
 
 	table := data.TableName()
-	rel, err := d.Pool.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
+	rel, err := d.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
 	relStr := string(rel)
 
 	return relStr, err
@@ -54,7 +54,7 @@ func (d *DB) Update(req string, data ReflectTable, column []string) (err error) 
 	}
 
 	table := data.TableName()
-	_, err = d.Pool.Exec(`UPDATE "`+table+`" SET  `+*re+` `+req, *relSlice...)
+	_, err = d.Exec(`UPDATE "`+table+`" SET  `+*re+` `+req, *relSlice...)
 	return
 }
 
@@ -67,7 +67,7 @@ func (d *DB) Del(table string, req string) (err error) {
 	if req != "" {
 		req = "WHERE " + req
 	}
-	_, err = d.Pool.Exec(`DELETE FROM ` + table + ` ` + req)
+	_, err = d.Exec(`DELETE FROM ` + table + ` ` + req)
 	if err != nil {
 		return
 	}
@@ -81,7 +81,7 @@ func (d *DB) Del(table string, req string) (err error) {
 // req:条件sql写法 where xxx
 func (d *DB) Count(table string, where string) int64 {
 	var re int64
-	err := d.Pool.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + where).Scan(&re)
+	err := d.QueryRow(`SELECT COUNT(*) FROM ` + table + ` ` + where).Scan(&re)
 	if err != nil {
 		return 0
 	}
