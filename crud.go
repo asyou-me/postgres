@@ -10,7 +10,7 @@ func (d *DB) Begin() (*Session, error) {
 		return session, err
 	}
 	session.Tx = s
-	session.DB = d
+	session.Engine = d
 	return session, nil
 }
 

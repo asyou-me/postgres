@@ -150,9 +150,17 @@ func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
 	var values = make([]interface{}, lenOut)
 	for k, v := range out {
 		if k == indexOut {
-			sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true)`
+			if v.Path == "" {
+				sets = sets + v.Key + `=$` + fmt.Sprint(k+1)
+			} else {
+				sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true)`
+			}
 		} else {
-			sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true),`
+			if v.Path == "" {
+				sets = sets + v.Key + `=$` + fmt.Sprint(k+1) + `,`
+			} else {
+				sets = sets + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true),`
+			}
 		}
 		values[k] = v.Value
 	}
@@ -167,9 +175,17 @@ func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
 	var indexOut = len(out) - 1
 	for k, v := range out {
 		if k == indexOut {
-			gets = gets + v.Key + `#>>'{` + v.Path + `}'`
+			if v.Path == "" {
+				gets = gets + v.Key
+			} else {
+				gets = gets + v.Key + `#>>'{` + v.Path + `}'`
+			}
 		} else {
-			gets = gets + v.Key + `#>>'{` + v.Path + `}',`
+			if v.Path == "" {
+				gets = gets + v.Key + `,`
+			} else {
+				gets = gets + v.Key + `#>>'{` + v.Path + `}',`
+			}
 		}
 		values[k] = &out[k].Value
 	}

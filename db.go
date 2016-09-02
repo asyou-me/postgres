@@ -32,6 +32,7 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error 
 	//初始化数据库
 	var err error
 
+	// 映射数据库连接参数
 	var connConfig = pgx.ConnPoolConfig{
 		ConnConfig: pgx.ConnConfig{
 			Host:     conf.Addr,
@@ -55,4 +56,57 @@ func NewDB(conf *pulic_type.MicroSerType, loger pulic_type.Logger) (*DB, error) 
 	db.TableMap = map[string]NewFunc{}
 	err := db.Open(conf, loger)
 	return &db, err
+}
+
+// SetLog 定义数据库记录对象
+func (db *DB) SetLog(log pulic_type.Logger) {
+	db.loger = log
+}
+
+// Debug 传入debug日志
+func (db *DB) Debug(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Debug(log)
+}
+
+// Info 传入info日志
+func (db *DB) Info(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Info(log)
+}
+
+// Print 传入Print日志
+func (db *DB) Print(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Print(log)
+}
+
+// Warn 传入Warn日志
+func (db *DB) Warn(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Warn(log)
+}
+
+// Error 传入Error日志
+func (db *DB) Error(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Error(log)
+}
+
+// Fatal 传入Fatal日志
+func (db *DB) Fatal(str string) {
+	log := &dbLog{
+		Msg: str,
+	}
+	db.loger.Fatal(log)
 }

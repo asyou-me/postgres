@@ -6,10 +6,10 @@
 
 ##需要实现的功能
 * sql表结构增删改查
+* 实现nosql相关的操作
 * 实现带缓存的查询（未实现）
-* 实现nosql相关的操作（未实现）
 
 ##使用方法
 * 获取源码  go get github.com/asyoume/postgresql
-* 安装命令  go install github.com/asyoume/postgresql/pgsql_map
+* 安装表结构映射命令  go install github.com/asyoume/postgresql/pgsql_map
 * import "github.com/asyoume/postgres"

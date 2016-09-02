@@ -20,6 +20,7 @@
 		"struct_name": "Test",
 		"show_struct": true,
 		"columns": [
+			"nick,Nick,string,,json:\"nick\"",
 			"d,D,*map[string]string,&map[string]string{},json:\"d\""
 		]
 	}]

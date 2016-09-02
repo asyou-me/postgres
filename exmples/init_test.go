@@ -2,6 +2,7 @@ package exmples
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	//"time"
 
@@ -29,52 +30,67 @@ func TestInit(t *testing.T) {
 		t.Error(err)
 	}
 
-	_, err = DB.Insert(&Test{D: &map[string]string{"xiaobai": "zheshi"}})
+	// 测试插入数据
+	_, err = DB.Insert(&Test{
+		D:    &map[string]string{"xiaobai": "zheshi", "qq": "422145328"},
+		Nick: "xiaobai",
+	})
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 	}
 
 	data2 := &Test{}
+	// 查询数据
 	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scan(data2)
 	if err != nil || (*data2.D)["xiaobai"] != "zheshi" {
-		t.Log(err)
+		t.Error(err)
 	}
 
+	// 查询列表数据
 	dataList := &[]Test{}
 	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scans(dataList, 1, 10)
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 	}
 
+	// 设置部分字段
 	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Set([]postgres.GSTYPE{
 		postgres.GSTYPE{
-			Path:  "xiaobai",
 			Key:   "d",
-			Value: "\"xiugaihou\"",
+			Path:  "qq",
+			Value: "\"4228\"",
+		}, postgres.GSTYPE{
+			Key:   "nick",
+			Value: "xiaobai1",
 		},
 	})
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 	}
 
 	data3 := []postgres.GSTYPE{
 		postgres.GSTYPE{
-			Path:  "xiaobai",
-			Key:   "d",
-			Value: "",
+			Key:  "d",
+			Path: "xiaobai,4",
+		}, postgres.GSTYPE{
+			Key: "nick",
 		},
 	}
+
+	// 获取部分字段
 	err = DB.Table("test").Get(data3)
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
+	} else {
+		fmt.Println("get data succeed:", data3)
 	}
 
 	if data3[0].Value != "xiugaihou" {
-		t.Log(errors.New("Get error"))
+		t.Error(errors.New("Get error"))
 	}
 
-	err = DB.Del("test", `d@>'{"xiaobai": "zheshi"}'`)
+	err = DB.Del("test", `d@>'{"xiaobai": "xiugaihou"}'`)
 	if err != nil {
-		t.Log(err)
+		t.Error(err)
 	}
 }
