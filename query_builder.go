@@ -54,7 +54,7 @@ func (q *QueryBuilder) Scan(out ReflectTable) error {
 
 	table := out.TableName()
 	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + q.whereStr()
-	err = q.Engine.Pool.QueryRow(query).Scan(*relSlice...)
+	err = q.Engine.QueryRow(query).Scan(*relSlice...)
 
 	q.Engine.Info(query)
 
@@ -106,7 +106,7 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 
 	query := `SELECT ` + *reStr + ` FROM "` + table + `"` + q.whereStr() + "" + ` LIMIT $` + fmt.Sprint(argsLen+1) + ` OFFSET $` + fmt.Sprint(argsLen+2)
 	q.Engine.Info(query)
-	rows, err := q.Engine.Pool.Query(query, q.args...)
+	rows, err := q.Engine.Query(query, q.args...)
 
 	if err != nil {
 		rows.Close()
@@ -164,7 +164,7 @@ func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
 		}
 		values[k] = v.Value
 	}
-	_, err = q.Engine.Pool.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
+	_, err = q.Engine.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
 	return
 }
 
@@ -189,7 +189,7 @@ func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
 		}
 		values[k] = &out[k].Value
 	}
-	return q.Engine.Pool.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+	return q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
 }
 
 func (q *QueryBuilder) whereStr() string {
