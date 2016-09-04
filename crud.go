@@ -1,6 +1,9 @@
 package postgres
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // Begin 开启一个事务
 func (d *DB) Begin() (*Session, error) {
@@ -15,7 +18,7 @@ func (d *DB) Begin() (*Session, error) {
 }
 
 // Insert 插入数据到数据库
-func (d *DB) Insert(data ReflectTable, column ...string) (string, error) {
+func (d *DB) Insert(data ReflectTable, columns ...GSTYPE) (string, error) {
 	var re *string
 	var reStr *string
 	var relSlice *[]interface{}
@@ -23,6 +26,18 @@ func (d *DB) Insert(data ReflectTable, column ...string) (string, error) {
 	relSlice, re, reStr, err := data.AllReflect()
 	if err != nil {
 		return "", err
+	}
+
+	// jsonb 数据
+	var indexOut = len(columns) - 1
+	var lenSlice = len(*relSlice)
+	for k, v := range columns {
+		if k == indexOut {
+			*reStr = *reStr + v.Key + `$` + fmt.Sprint(k+lenSlice)
+		} else {
+			*reStr = *reStr + v.Key + `$` + fmt.Sprint(k+lenSlice) + `,`
+		}
+		*relSlice = append(*relSlice, v.Value)
 	}
 
 	table := data.TableName()
