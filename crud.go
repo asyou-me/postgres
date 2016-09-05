@@ -54,7 +54,7 @@ func (d *DB) Insert(data ReflectTable, columns ...GSTYPE) (string, error) {
 // data:需要更新的数据的对象
 //
 // column:需要更新的字段
-func (d *DB) Update(req string, data ReflectTable, column []string) (err error) {
+func (d *DB) Update(req string, data ReflectTable, column []string, columns ...GSTYPE) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
 	}
