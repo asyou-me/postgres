@@ -63,9 +63,26 @@ func (d *DB) Update(req string, data ReflectTable, column []string, columns ...G
 	var relSlice *[]interface{}
 
 	relSlice, re, err = data.Reflect(column)
-
 	if err != nil {
 		return
+	}
+
+	var indexOut = len(columns) - 1
+	for k, v := range columns {
+		if k == indexOut {
+			if v.Path == "" {
+				*re = *re + v.Key + `=$` + fmt.Sprint(k+1)
+			} else {
+				*re = *re + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true)`
+			}
+		} else {
+			if v.Path == "" {
+				*re = *re + v.Key + `=$` + fmt.Sprint(k+1) + `,`
+			} else {
+				*re = *re + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true),`
+			}
+		}
+		*relSlice = append(*relSlice, v.Value)
 	}
 
 	table := data.TableName()
