@@ -89,6 +89,27 @@ func TestInit(t *testing.T) {
 		t.Error(errors.New("get error"))
 	}
 
+	data4 := []postgres.GSTYPE{
+		postgres.GSTYPE{
+			Key:  "d",
+			Path: "p,2",
+		}, postgres.GSTYPE{
+			Key: "nick",
+		},
+	}
+
+	// 获取部分字段
+	err = DB.Table("test").Get(data4)
+	if err != nil {
+		t.Error(err)
+	} else {
+		fmt.Println("get data succeed:", data4)
+	}
+
+	if data4[0].Value != "" {
+		t.Error(errors.New("get error"))
+	}
+
 	err = DB.Del("test", `d@>'{"p": "修改后"}'`)
 	if err != nil {
 		t.Error(err)
