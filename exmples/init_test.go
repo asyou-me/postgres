@@ -32,8 +32,8 @@ func TestInit(t *testing.T) {
 
 	// 测试插入数据
 	_, err = DB.Insert(&Test{
-		D:    &map[string]string{"xiaobai": "zheshi", "qq": "422145328"},
-		Nick: "xiaobai",
+		D:    &map[string]string{"p": "修改前", "qq": "422145328"},
+		Nick: "昵称",
 	})
 	if err != nil {
 		t.Error(err)
@@ -41,24 +41,24 @@ func TestInit(t *testing.T) {
 
 	data2 := &Test{}
 	// 查询数据
-	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scan(data2)
-	if err != nil || (*data2.D)["xiaobai"] != "zheshi" {
+	err = DB.Table("test").Where(`d@>'{"p": "修改前"}'`).Scan(data2)
+	if err != nil || (*data2.D)["p"] != "修改前" {
 		t.Error(err)
 	}
 
 	// 查询列表数据
 	dataList := &[]Test{}
-	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Scans(dataList, 1, 10)
+	err = DB.Table("test").Where(`d@>'{"p": "修改前"}'`).Scans(dataList, 1, 10)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// 设置部分字段
-	err = DB.Table("test").Where(`d@>'{"xiaobai": "zheshi"}'`).Set([]postgres.GSTYPE{
+	err = DB.Table("test").Where(`d@>'{"p": "修改前"}'`).Set([]postgres.GSTYPE{
 		postgres.GSTYPE{
 			Key:   "d",
-			Path:  "qq",
-			Value: "\"4228\"",
+			Path:  "p",
+			Value: "\"修改后\"",
 		}, postgres.GSTYPE{
 			Key:   "nick",
 			Value: "xiaobai1",
@@ -71,7 +71,7 @@ func TestInit(t *testing.T) {
 	data3 := []postgres.GSTYPE{
 		postgres.GSTYPE{
 			Key:  "d",
-			Path: "xiaobai,4",
+			Path: "p",
 		}, postgres.GSTYPE{
 			Key: "nick",
 		},
@@ -85,11 +85,11 @@ func TestInit(t *testing.T) {
 		fmt.Println("get data succeed:", data3)
 	}
 
-	if data3[0].Value != "xiugaihou" {
-		t.Error(errors.New("Get error"))
+	if data3[0].Value != "修改后" {
+		t.Error(errors.New("get error"))
 	}
 
-	err = DB.Del("test", `d@>'{"xiaobai": "xiugaihou"}'`)
+	err = DB.Del("test", `d@>'{"p": "修改后"}'`)
 	if err != nil {
 		t.Error(err)
 	}

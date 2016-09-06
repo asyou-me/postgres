@@ -164,6 +164,7 @@ func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
 		}
 		values[k] = v.Value
 	}
+	fmt.Println(`UPDATE "` + q.table + `" SET ` + sets + q.whereStr())
 	_, err = q.Engine.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
 	return
 }
@@ -187,9 +188,14 @@ func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
 				gets = gets + v.Key + `#>>'{` + v.Path + `}',`
 			}
 		}
-		values[k] = &out[k].Value
+		values[k] = &(v.Value)
 	}
-	return q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+	fmt.Println(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr())
+	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+	if err != nil {
+		return
+	}
+	return nil
 }
 
 func (q *QueryBuilder) whereStr() string {

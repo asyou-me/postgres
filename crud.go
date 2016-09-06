@@ -18,7 +18,7 @@ func (d *DB) Begin() (*Session, error) {
 }
 
 // Insert 插入数据到数据库
-func (d *DB) Insert(data ReflectTable, columns ...GSTYPE) (string, error) {
+func (d *DB) Insert(data ReflectTable) (string, error) {
 	var re *string
 	var reStr *string
 	var relSlice *[]interface{}
@@ -28,19 +28,8 @@ func (d *DB) Insert(data ReflectTable, columns ...GSTYPE) (string, error) {
 		return "", err
 	}
 
-	// jsonb 数据
-	var indexOut = len(columns) - 1
-	var lenSlice = len(*relSlice)
-	for k, v := range columns {
-		if k == indexOut {
-			*reStr = *reStr + v.Key + `$` + fmt.Sprint(k+lenSlice)
-		} else {
-			*reStr = *reStr + v.Key + `$` + fmt.Sprint(k+lenSlice) + `,`
-		}
-		*relSlice = append(*relSlice, v.Value)
-	}
-
 	table := data.TableName()
+	fmt.Println(`INSERT INTO "` + table + `" (` + *re + `) VALUES (` + *reStr + `)`)
 	rel, err := d.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
 	relStr := string(rel)
 
@@ -54,7 +43,7 @@ func (d *DB) Insert(data ReflectTable, columns ...GSTYPE) (string, error) {
 // data:需要更新的数据的对象
 //
 // column:需要更新的字段
-func (d *DB) Update(req string, data ReflectTable, column []string, columns ...GSTYPE) (err error) {
+func (d *DB) Update(req string, data ReflectTable, column []string) (err error) {
 	if req == "" {
 		return errors.New("更新条件不能为空")
 	}
@@ -65,24 +54,6 @@ func (d *DB) Update(req string, data ReflectTable, column []string, columns ...G
 	relSlice, re, err = data.Reflect(column)
 	if err != nil {
 		return
-	}
-
-	var indexOut = len(columns) - 1
-	for k, v := range columns {
-		if k == indexOut {
-			if v.Path == "" {
-				*re = *re + v.Key + `=$` + fmt.Sprint(k+1)
-			} else {
-				*re = *re + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true)`
-			}
-		} else {
-			if v.Path == "" {
-				*re = *re + v.Key + `=$` + fmt.Sprint(k+1) + `,`
-			} else {
-				*re = *re + v.Key + `=jsonb_set(` + v.Key + `,'{` + v.Path + `}',$` + fmt.Sprint(k+1) + `,true),`
-			}
-		}
-		*relSlice = append(*relSlice, v.Value)
 	}
 
 	table := data.TableName()
