@@ -68,11 +68,11 @@ func TestInit(t *testing.T) {
 		t.Error(err)
 	}
 
-	data3 := []postgres.GSTYPE{
-		postgres.GSTYPE{
+	data3 := []*postgres.GSTYPE{
+		&postgres.GSTYPE{
 			Key:  "d",
 			Path: "p",
-		}, postgres.GSTYPE{
+		}, &postgres.GSTYPE{
 			Key: "nick",
 		},
 	}
@@ -89,11 +89,11 @@ func TestInit(t *testing.T) {
 		t.Error(errors.New("get error"))
 	}
 
-	data4 := []postgres.GSTYPE{
-		postgres.GSTYPE{
+	data4 := []*postgres.GSTYPE{
+		&postgres.GSTYPE{
 			Key:  "d",
 			Path: "p,2",
-		}, postgres.GSTYPE{
+		}, &postgres.GSTYPE{
 			Key: "nick",
 		},
 	}

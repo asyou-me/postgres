@@ -55,7 +55,6 @@ func (q *QueryBuilder) Scan(out ReflectTable) error {
 	table := out.TableName()
 	query := `SELECT ` + *reStr + ` FROM "` + table + `" ` + q.whereStr()
 	err = q.Engine.QueryRow(query).Scan(*relSlice...)
-
 	q.Engine.Info(query)
 
 	return err
@@ -169,7 +168,7 @@ func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
 }
 
 // Get 获取jsonb数据
-func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
+func (q *QueryBuilder) Get(out []*GSTYPE) (err error) {
 	var gets = ""
 	var values = make([]interface{}, len(out))
 	var indexOut = len(out) - 1
@@ -187,7 +186,7 @@ func (q *QueryBuilder) Get(out []GSTYPE) (err error) {
 				gets = gets + v.Key + `#>>'{` + v.Path + `}',`
 			}
 		}
-		values[k] = &(out[k])
+		values[k] = out[k]
 	}
 	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
 	if err != nil {
