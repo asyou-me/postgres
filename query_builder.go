@@ -143,6 +143,9 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 
 // Set 设定jsonb数据
 func (q *QueryBuilder) Set(out []GSTYPE) (err error) {
+	if q.where == "" {
+		return errors.New("更新条件不能为空")
+	}
 	var sets = ""
 	var lenOut = len(out)
 	var indexOut = lenOut - 1
