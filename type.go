@@ -22,8 +22,10 @@ func (s *GSTYPE) Scan(vr *pgx.ValueReader) error {
 	return vr.Err()
 }
 
-func (n GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
+// FormatCode 必须支持函数
+func (GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
 
+// Encode 将数据转换到pgx
 func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 	if s.Value == "" {
 		w.WriteInt32(-1)
@@ -32,3 +34,4 @@ func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 
 	return encodeString(w, oid, s.Value)
 }
+
