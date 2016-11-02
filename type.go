@@ -51,8 +51,10 @@ func (s *GSTYPE) Scan(vr *pgx.ValueReader) error {
 	return vr.Err()
 }
 
-func (n GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
+// FormatCode 字段为文字格式
+func (s GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
 
+// Encode 写到数据
 func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 	if s.Value == "" {
 		w.WriteInt32(-1)
@@ -63,6 +65,31 @@ func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 
 // V 基础类型
 type V struct {
-	T uint8
+	T int16
 	V string
+}
+
+// FormatCode 字段为文字格式
+func (v V) FormatCode() int16 { return pgx.TextFormatCode }
+
+// Scan 渲染数据到字符串
+func (v *V) Scan(vr *pgx.ValueReader) error {
+	// Not checking oid as so we can scan anything into into a NullString - may revisit this decision later
+	if vr.Len() == -1 {
+		v.V = ""
+		return nil
+	}
+	v.V = decodeText(vr)
+	return vr.Err()
+}
+
+// Encode 写到数据
+func (v V) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
+	if v.V == "" {
+		w.WriteInt32(-1)
+		return nil
+	}
+	w.WriteInt32(int32(len(v.V)))
+	w.WriteBytes([]byte(v.V))
+	return nil
 }
