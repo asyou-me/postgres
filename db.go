@@ -59,54 +59,54 @@ func NewDB(conf *pulic_type.MicroSerType, loger pulic_type.Logger) (*DB, error) 
 }
 
 // SetLog 定义数据库记录对象
-func (db *DB) SetLog(log pulic_type.Logger) {
-	db.loger = log
+func (d *DB) SetLog(log pulic_type.Logger) {
+	d.loger = log
 }
 
 // Debug 传入debug日志
-func (db *DB) Debug(str string) {
+func (d *DB) Debug(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Debug(log)
+	d.loger.Debug(log)
 }
 
 // Info 传入info日志
-func (db *DB) Info(str string) {
+func (d *DB) Info(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Info(log)
+	d.loger.Info(log)
 }
 
 // Print 传入Print日志
-func (db *DB) Print(str string) {
+func (d *DB) Print(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Print(log)
+	d.loger.Print(log)
 }
 
 // Warn 传入Warn日志
-func (db *DB) Warn(str string) {
+func (d *DB) Warn(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Warn(log)
+	d.loger.Warn(log)
 }
 
 // Error 传入Error日志
-func (db *DB) Error(str string) {
+func (d *DB) Error(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Error(log)
+	d.loger.Error(log)
 }
 
 // Fatal 传入Fatal日志
-func (db *DB) Fatal(str string) {
+func (d *DB) Fatal(str string) {
 	log := &dbLog{
 		Msg: str,
 	}
-	db.loger.Fatal(log)
+	d.loger.Fatal(log)
 }
