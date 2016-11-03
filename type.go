@@ -4,33 +4,33 @@ import "github.com/jackc/pgx"
 
 // 类型
 const (
-	Invalid uint8 = iota
-	Bool
-	Int
-	Int8
-	Int16
-	Int32
-	Int64
-	Uint
-	Uint8
-	Uint16
-	Uint32
-	Uint64
-	Uintptr
-	Float32
-	Float64
-	Complex64
-	Complex128
-	Array
-	Chan
-	Func
-	Interface
-	Map
-	Ptr
-	Slice
-	String
-	Struct
-	UnsafePointer
+	Invalid       uint8 = iota // 0
+	Bool                       // 1
+	Int                        // 2
+	Int8                       // 3
+	Int16                      // 4
+	Int32                      // 5
+	Int64                      // 6
+	Uint                       // 7
+	Uint8                      // 8
+	Uint16                     // 9
+	Uint32                     // 10
+	Uint64                     // 11
+	Uintptr                    // 12
+	Float32                    // 13
+	Float64                    // 14
+	Complex64                  // 15
+	Complex128                 // 16
+	Array                      // 17
+	Chan                       // 18
+	Func                       // 19
+	Interface                  // 20
+	Map                        // 21
+	Ptr                        // 22
+	Slice                      // 23
+	String                     // 24
+	Struct                     // 25
+	UnsafePointer              // 26
 )
 
 // GSTYPE json 格式化数据
