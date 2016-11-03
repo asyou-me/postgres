@@ -15,15 +15,16 @@ func (q *QueryBuilder) InsertV(data map[string]*V) (string, error) {
 	var index int
 	for k, v := range data {
 		if index == indexData {
-			fields = "\"" + k + "\""
-			inserts = `$` + fmt.Sprint(index+1)
+			fields = fields + "\"" + k + "\""
+			inserts = inserts + `$` + fmt.Sprint(index+1)
 		} else {
-			fields = "\"" + k + "\"" + `,`
-			inserts = `$` + fmt.Sprint(index+1) + `,`
+			fields = fields + "\"" + k + "\"" + `,`
+			inserts = inserts + `$` + fmt.Sprint(index+1) + `,`
 		}
 		values[index] = v
 		index = index + 1
 	}
+	fmt.Println(`INSERT INTO "` + q.table + `" (` + fields + `) VALUES (` + inserts + `)`)
 	commandTag, err := q.Engine.Exec(`INSERT INTO "`+q.table+`" (`+fields+`) VALUES (`+inserts+`)`, values...)
 	return string(commandTag), err
 }
