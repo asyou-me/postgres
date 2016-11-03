@@ -46,9 +46,9 @@ func (q *QueryBuilder) UpdateV(data map[string]*V) (string, error) {
 	var values = make([]interface{}, lenData)
 	for k, v := range data {
 		if index == indexData {
-			sets = sets + k + `=$` + fmt.Sprint(index+1)
+			sets = sets + "\"" + k + "\"" + `=$` + fmt.Sprint(index+1)
 		} else {
-			sets = sets + k + `=$` + fmt.Sprint(index+1) + `,`
+			sets = sets + "\"" + k + "\"" + `=$` + fmt.Sprint(index+1) + `,`
 		}
 		values[index] = v
 		index = index + 1
@@ -65,15 +65,13 @@ func (q *QueryBuilder) GetV(data map[string]*V) (err error) {
 	var index = 0
 	for k, v := range data {
 		if index == indexData {
-			gets = gets + k
+			gets = gets + "\"" + k + "\""
 		} else {
-			gets = gets + k + `,`
+			gets = gets + "\"" + k + "\"" + `,`
 		}
 		values[index] = v
 		index = index + 1
 	}
-	fmt.Println(values)
-	fmt.Println(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr())
 	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
 	if err != nil {
 		return
