@@ -1,6 +1,10 @@
 package postgres
 
-import "github.com/jackc/pgx"
+import (
+	"fmt"
+
+	"github.com/jackc/pgx"
+)
 
 // 类型
 const (
@@ -31,6 +35,7 @@ const (
 	String                     // 24
 	Struct                     // 25
 	UnsafePointer              // 26
+	IntArray                   // 27
 )
 
 // GSTYPE json 格式化数据
@@ -43,6 +48,7 @@ type GSTYPE struct {
 // Scan 渲染数据到字符串
 func (s *GSTYPE) Scan(vr *pgx.ValueReader) error {
 	// Not checking oid as so we can scan anything into into a NullString - may revisit this decision later
+	fmt.Println("s.Value:", s.Value)
 	if vr.Len() == -1 {
 		s.Value = ""
 		return nil
@@ -51,10 +57,10 @@ func (s *GSTYPE) Scan(vr *pgx.ValueReader) error {
 	return vr.Err()
 }
 
-// FormatCode 必须支持函数
-func (GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
+// FormatCode 字段为文字格式
+func (s GSTYPE) FormatCode() int16 { return pgx.TextFormatCode }
 
-// Encode 将数据转换到pgx
+// Encode 写到数据
 func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 	if s.Value == "" {
 		w.WriteInt32(-1)
@@ -67,4 +73,30 @@ func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 type V struct {
 	T uint8
 	V string
+}
+
+// FormatCode 字段为文字格式
+func (v V) FormatCode() int16 { return pgx.TextFormatCode }
+
+// Scan 渲染数据到字符串
+func (v *V) Scan(vr *pgx.ValueReader) error {
+	fmt.Println("v.V:", v.V)
+	if vr.Len() == -1 {
+		v.V = ""
+		return nil
+	}
+	v.V = decodeText(vr)
+	return vr.Err()
+}
+
+// Encode 写到数据
+func (v V) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
+	fmt.Println("v.V:", v.V)
+	if v.V == "" {
+		w.WriteInt32(-1)
+		return nil
+	}
+	w.WriteInt32(int32(len(v.V)))
+	w.WriteBytes([]byte(v.V))
+	return nil
 }
