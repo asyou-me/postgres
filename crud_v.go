@@ -24,7 +24,6 @@ func (q *QueryBuilder) InsertV(data map[string]*V) (string, error) {
 		values[index] = v
 		index = index + 1
 	}
-	fmt.Println(`INSERT INTO "` + q.table + `" (` + fields + `) VALUES (` + inserts + `)`)
 	commandTag, err := q.Engine.Exec(`INSERT INTO "`+q.table+`" (`+fields+`) VALUES (`+inserts+`)`, values...)
 	return string(commandTag), err
 }
@@ -56,4 +55,28 @@ func (q *QueryBuilder) UpdateV(data map[string]*V) (string, error) {
 	}
 	commandTag, err := q.Engine.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
 	return string(commandTag), err
+}
+
+// GetV 获取字段数据
+func (q *QueryBuilder) GetV(data map[string]*V) (err error) {
+	var gets = ""
+	var values = make([]interface{}, len(data))
+	var indexData = len(data) - 1
+	var index = 0
+	for k, v := range data {
+		if index == indexData {
+			gets = gets + k
+		} else {
+			gets = gets + k + `,`
+		}
+		values[index] = v
+		index = index + 1
+	}
+	fmt.Println(values)
+	fmt.Println(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr())
+	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+	if err != nil {
+		return
+	}
+	return nil
 }

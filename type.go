@@ -3,6 +3,8 @@ package postgres
 import (
 	"fmt"
 
+	"errors"
+
 	"github.com/jackc/pgx"
 )
 
@@ -75,23 +77,45 @@ type V struct {
 	V string
 }
 
+// MarshalJSON 序列化时调用
+func (v *V) MarshalJSON() ([]byte, error) {
+	switch v.T {
+	case Int, Int8, Int16, Int32, Int64, Bool:
+		return []byte(v.V), nil
+	case String:
+		return []byte(`"` + v.V + `"`), nil
+	case IntArray:
+		lenV := len(v.V)
+		b := make([]byte, lenV)
+		copy(b, "[")
+		copy(b[1:], v.V[1:])
+		copy(b[lenV-1:], "]")
+		fmt.Println(string(b))
+		return b, nil
+	default:
+		return []byte{}, errors.New("无法识别类型:" + fmt.Sprint(v.T))
+	}
+}
+
 // FormatCode 字段为文字格式
 func (v V) FormatCode() int16 { return pgx.TextFormatCode }
 
 // Scan 渲染数据到字符串
 func (v *V) Scan(vr *pgx.ValueReader) error {
-	fmt.Println("v.V:", v.V)
 	if vr.Len() == -1 {
 		v.V = ""
 		return nil
 	}
+
+	fmt.Println(vr.Type())
+	fmt.Println(decodeText(vr))
+
 	v.V = decodeText(vr)
 	return vr.Err()
 }
 
 // Encode 写到数据
 func (v V) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
-	fmt.Println("v.V:", v.V)
 	if v.V == "" {
 		w.WriteInt32(-1)
 		return nil
