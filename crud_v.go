@@ -72,10 +72,60 @@ func (q *QueryBuilder) GetV(data map[string]*V) (err error) {
 		values[index] = v
 		index = index + 1
 	}
-	fmt.Println(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr())
-	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
+	query := `SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()
+	q.Engine.Info(query)
+	err = q.Engine.QueryRow(query).Scan(values...)
 	if err != nil {
 		return
 	}
 	return nil
+}
+
+// ListV 获取字段数据
+func (q *QueryBuilder) ListV(files map[string]uint8, limit int, offset int) ([]*map[string]*V, error) {
+	var gets string
+	var indexData = len(files) - 1
+	var index = 0
+	var fs = make([]string, len(files))
+	for k := range files {
+		if index == indexData {
+			gets = gets + "\"" + k + "\""
+		} else {
+			gets = gets + "\"" + k + "\"" + `,`
+		}
+		fs[index] = k
+		index = index + 1
+	}
+	outs := make([]*map[string]*V, 0, limit)
+
+	query := `SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr() + "" + ` LIMIT ` + fmt.Sprint(limit) + ` OFFSET ` + fmt.Sprint(offset)
+	q.Engine.Info(query)
+	rows, err := q.Engine.Query(query, q.args...)
+	defer rows.Close()
+
+	if err != nil {
+		q.Engine.Error(err.Error())
+		return nil, err
+	}
+
+	for rows.Next() {
+		item := map[string]*V{}
+		values := make([]interface{}, len(files))
+		i := 0
+		for _, k := range fs {
+			v := &V{
+				T: files[k],
+			}
+			item[k] = v
+			values[i] = v
+			i = i + 1
+		}
+		err = rows.Scan(values...)
+		if err != nil {
+			q.Engine.Warn(err.Error())
+			continue
+		}
+		outs = append(outs, &item)
+	}
+	return outs, nil
 }

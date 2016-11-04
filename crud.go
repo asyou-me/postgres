@@ -1,9 +1,6 @@
 package postgres
 
-import (
-	"errors"
-	"fmt"
-)
+import "errors"
 
 // Begin 开启一个事务
 func (d *DB) Begin() (*Session, error) {
@@ -29,7 +26,6 @@ func (d *DB) Insert(data ReflectTable) (string, error) {
 	}
 
 	table := data.TableName()
-	fmt.Println(`INSERT INTO "` + table + `" (` + *re + `) VALUES (` + *reStr + `)`)
 	rel, err := d.Exec(`INSERT INTO "`+table+`" (`+*re+`) VALUES (`+*reStr+`)`, *relSlice...)
 	relStr := string(rel)
 
@@ -70,7 +66,9 @@ func (d *DB) Del(table string, req string) (err error) {
 	if req != "" {
 		req = "WHERE " + req
 	}
-	_, err = d.Exec(`DELETE FROM ` + table + ` ` + req)
+	sql := `DELETE FROM ` + table + ` ` + req
+	_, err = d.Exec(sql)
+	d.Info(sql)
 	if err != nil {
 		return
 	}

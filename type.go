@@ -82,8 +82,13 @@ type V struct {
 // MarshalJSON 序列化时调用
 func (v *V) MarshalJSON() ([]byte, error) {
 	switch v.T {
-	case Int, Int8, Int16, Int32, Int64, Bool:
+	case Int, Int8, Int16, Int32, Int64:
 		return []byte(v.V), nil
+	case Bool:
+		if v.V == "true" {
+			return []byte(v.V), nil
+		}
+		return []byte("false"), nil
 	case String:
 		return []byte(`"` + v.V + `"`), nil
 	case IntArray:
@@ -158,7 +163,7 @@ func (v *V) Scan(vr *pgx.ValueReader) error {
 		v.IntArray = &is
 		v.T = IntArray
 	default:
-		return fmt.Errorf("cannot encode  oid %v", vr.Type().DataType)
+		return fmt.Errorf("cannot encode  oid %v", vr.Type().Table)
 	}
 
 	return vr.Err()
