@@ -72,6 +72,7 @@ func (q *QueryBuilder) GetV(data map[string]*V) (err error) {
 		values[index] = v
 		index = index + 1
 	}
+	fmt.Println(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr())
 	err = q.Engine.QueryRow(`SELECT ` + gets + ` FROM "` + q.table + `"` + q.whereStr()).Scan(values...)
 	if err != nil {
 		return
