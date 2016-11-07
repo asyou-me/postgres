@@ -3,7 +3,7 @@ package postgres
 type dbLog struct {
 	ID    string `json:"id"`
 	Type  string `json:"type"`
-	Msg   string `json:"type"`
+	Msg   string `json:"msg"`
 	Level string `json:"level"`
 	Time  int64  `json:"time"`
 }
