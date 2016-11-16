@@ -83,6 +83,9 @@ type V struct {
 func (v *V) MarshalJSON() ([]byte, error) {
 	switch v.T {
 	case Int, Int8, Int16, Int32, Int64:
+		if len(v.V) == 0 {
+			return []byte{'0'}, nil
+		}
 		return []byte(v.V), nil
 	case Bool:
 		if v.V == "true" {
@@ -92,6 +95,9 @@ func (v *V) MarshalJSON() ([]byte, error) {
 	case String:
 		return []byte(`"` + v.V + `"`), nil
 	case IntArray:
+		if v.IntArray == nil {
+			return []byte("[]"), nil
+		}
 		datas := *v.IntArray
 		if len(datas) == 1 {
 			return []byte("[" + fmt.Sprint(datas[0]) + "]"), nil
