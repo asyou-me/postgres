@@ -29,12 +29,6 @@ func (q *QueryBuilder) InsertV(data map[string]*V) (string, error) {
 }
 
 // UpdateV 更新数据到数据库
-//
-// req:查询条件 sql写法 where xxx
-//
-// data:需要更新的数据的对象
-//
-// column:需要更新的字段
 func (q *QueryBuilder) UpdateV(data map[string]*V) (string, error) {
 	if q.where == "" {
 		return "", errors.New("更新条件不能为空")
