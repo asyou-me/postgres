@@ -10,11 +10,11 @@ type QueryBuilder struct {
 	Engine *DB
 	table  string
 	// 查询条件
-	where  string
+	where string
+	// 排序条件
+	order  string
 	args   []interface{}
 	column []string
-	// 排序条件
-	order []string
 }
 
 // Table 数据查询的表
@@ -23,15 +23,8 @@ func (q *QueryBuilder) Table(table string) *QueryBuilder {
 	return q
 }
 
-// Where 数据查询条件
-func (q *QueryBuilder) Where(sql string, args ...interface{}) *QueryBuilder {
-	q.where = sql
-	q.args = args
-	return q
-}
-
 // OrderBy 数据排序条件
-func (q *QueryBuilder) OrderBy(sql ...string) *QueryBuilder {
+func (q *QueryBuilder) OrderBy(sql string) *QueryBuilder {
 	q.order = sql
 	return q
 }
@@ -196,6 +189,26 @@ func (q *QueryBuilder) Get(out []*GSTYPE) (err error) {
 		return
 	}
 	return nil
+}
+
+// Where 数据查询条件
+func (q *QueryBuilder) Where(sql string, args ...interface{}) *QueryBuilder {
+	q.where = sql
+	return q
+}
+
+// Order 排序条件
+func (q *QueryBuilder) Order(sql string) *QueryBuilder {
+	q.order = sql
+	return q
+}
+
+// OrderStr 数据排序条件
+func (q *QueryBuilder) OrderStr() string {
+	if q.order != "" {
+		return " ORDER BY " + q.order
+	}
+	return ""
 }
 
 func (q *QueryBuilder) whereStr() string {

@@ -28,7 +28,7 @@ type DB struct {
 }
 
 // Open 创建新的数据库对象
-func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error {
+func (d *DB) Open(conf *pulic_type.MicroSerType) error {
 	//初始化数据库
 	var err error
 
@@ -45,16 +45,15 @@ func (d *DB) Open(conf *pulic_type.MicroSerType, loger pulic_type.Logger) error 
 	}
 
 	d.ConnPool, err = pgx.NewConnPool(connConfig)
-	//传入外部日志模块
-	d.loger = loger
 	return err
 }
 
 // NewDB 定义新建数据库操作对象的当法
-func NewDB(conf *pulic_type.MicroSerType, loger pulic_type.Logger) (*DB, error) {
+func NewDB(conf *pulic_type.MicroSerType) (*DB, error) {
 	db := DB{}
 	db.TableMap = map[string]NewFunc{}
-	err := db.Open(conf, loger)
+	err := db.Open(conf)
+	db.loger = &pulic_type.DefalutLogger{}
 	return &db, err
 }
 

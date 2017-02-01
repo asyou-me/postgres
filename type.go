@@ -39,6 +39,7 @@ const (
 	Struct                     // 25
 	UnsafePointer              // 26
 	IntArray                   // 27
+	StringArray                // 28
 )
 
 // GSTYPE json 格式化数据
@@ -74,9 +75,10 @@ func (s GSTYPE) Encode(w *pgx.WriteBuf, oid pgx.Oid) error {
 
 // V 基础类型
 type V struct {
-	T        uint8
-	V        string
-	IntArray *[]int64
+	T           uint8
+	V           string
+	IntArray    *[]int64
+	StringArray *[]string
 }
 
 // MarshalJSON 序列化时调用
