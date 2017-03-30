@@ -24,7 +24,9 @@ func (q *QueryBuilder) InsertV(data map[string]*V) (string, error) {
 		values[index] = v
 		index = index + 1
 	}
+	q.Engine.Info(`INSERT INTO "` + q.table + `" (` + fields + `) VALUES (` + inserts + `)`)
 	commandTag, err := q.Engine.Exec(`INSERT INTO "`+q.table+`" (`+fields+`) VALUES (`+inserts+`)`, values...)
+	fmt.Println("err:", err)
 	return string(commandTag), err
 }
 
@@ -47,6 +49,7 @@ func (q *QueryBuilder) UpdateV(data map[string]*V) (string, error) {
 		values[index] = v
 		index = index + 1
 	}
+	q.Engine.Info(`UPDATE "` + q.table + `" SET ` + sets + q.whereStr())
 	commandTag, err := q.Engine.Exec(`UPDATE "`+q.table+`" SET `+sets+q.whereStr(), values...)
 	return string(commandTag), err
 }
