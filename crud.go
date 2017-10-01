@@ -83,7 +83,7 @@ func (d *DB) Del(table string, req string) (err error) {
 func (d *DB) Count(table string, where string) int64 {
 	var re int64
 	d.Info(`SELECT COUNT(*) FROM ` + table + ` ` + where)
-	err := d.QueryRow(`SELECT COUNT(*) FROM ` + table + ` WHERE ` + where).Scan(&re)
+	err := d.QueryRow(`SELECT COUNT(*) FROM "` + table + `" WHERE ` + where).Scan(&re)
 	if err != nil {
 		return 0
 	}
