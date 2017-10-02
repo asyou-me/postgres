@@ -1,6 +1,9 @@
 package postgres
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // Begin 开启一个事务
 func (d *DB) Begin() (*Session, error) {
@@ -44,16 +47,24 @@ func (d *DB) Update(req string, data ReflectTable, column []string) (err error) 
 		return errors.New("更新条件不能为空")
 	}
 	req = "WHERE " + req
-	var re *string
+	fmt.Println("req:", req)
+	var re string
 	var relSlice *[]interface{}
 
-	relSlice, re, err = data.Reflect(column)
+	relSlice, _, err = data.Reflect(column)
 	if err != nil {
 		return
 	}
+	for index, v := range column {
+		if index > 0 {
+			re = re + `,"` + v + `"=$` + fmt.Sprint(index+1)
+		} else {
+			re = re + `"` + v + `"=$` + fmt.Sprint(index+1)
+		}
+	}
 
 	table := data.TableName()
-	_, err = d.Exec(`UPDATE "`+table+`" SET  `+*re+` `+req, *relSlice...)
+	_, err = d.Exec(`UPDATE "`+table+`" SET  `+re+` `+req, *relSlice...)
 	return
 }
 
