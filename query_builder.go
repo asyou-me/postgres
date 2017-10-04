@@ -78,7 +78,7 @@ func (q *QueryBuilder) Scans(out interface{}, args ...int64) error {
 		limit = 10
 		offset = 0
 	}
-	q.args = append(q.args, offset, limit)
+	q.args = append(q.args, limit, offset)
 
 	if newFunc, ok = q.Engine.TableMap[table]; !ok {
 		return errors.New("表" + table + "未初始化")
